@@ -1,0 +1,34 @@
+{
+  "name": "ngilive-map",
+  "version": "1.0.0",
+  "description": "NGI Grafana Map panel",
+  "scripts": {
+    "build": "grafana-toolkit plugin:build",
+    "test": "grafana-toolkit plugin:test",
+    "dev": "grafana-toolkit plugin:dev",
+    "watch": "grafana-toolkit plugin:dev --watch"
+  },
+  "author": "NGI",
+  "license": "MIT",
+  "devDependencies": {
+    "@grafana/data": "6.5.2",
+    "@grafana/toolkit": "6.5.2",
+    "@grafana/ui": "6.5.2",
+    "@types/leaflet": "^1.5.6",
+    "@types/proj4": "^2.5.0",
+    "@types/react": "16.9.16",
+    "@types/react-dom": "16.9.4",
+    "@types/react-leaflet": "^2.5.0",
+    "leaflet": "^1.6.0",
+    "proj4": "^2.6.0",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-leaflet": "^2.6.1",
+    "react-scripts": "3.3.0"
+  },
+  "dependencies": {
+    "@types/esri-leaflet": "^2.1.5",
+    "esri-leaflet": "^2.3.2",
+    "react-leaflet-street-view": "^1.0.8"
+  }
+}

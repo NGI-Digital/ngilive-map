@@ -1,0 +1,27 @@
+{
+  "type": "panel",
+  "name": "NGI Map",
+  "id": "ngi-map-panel",
+
+  "info": {
+    "description": "Map",
+    "author": {
+      "name": "NGI"
+    },
+    "keywords": ["Simple"],
+    "logos": {
+      "small": "img/logo.svg",
+      "large": "img/logo.svg"
+    },
+    "links": [
+    ],
+    "screenshots": [],
+    "version": "%VERSION%",
+    "updated": "%TODAY%"
+  },
+
+  "dependencies": {
+    "grafanaVersion": "6.5.x",
+    "plugins": []
+  }
+}

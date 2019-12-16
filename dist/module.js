@@ -654,22 +654,6 @@ function geojsonToArcGIS (geojson, idAttribute) {
 
 /***/ }),
 
-/***/ "../node_modules/css-loader/dist/cjs.js?!../node_modules/postcss-loader/src/index.js?!../node_modules/sass-loader/lib/loader.js!./app.css":
-/*!*********************************************************************************************************************************************************!*\
-  !*** ../node_modules/css-loader/dist/cjs.js??ref--8-1!../node_modules/postcss-loader/src??ref--8-2!../node_modules/sass-loader/lib/loader.js!./app.css ***!
-  \*********************************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-// Imports
-var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../node_modules/css-loader/dist/runtime/api.js */ "../node_modules/css-loader/dist/runtime/api.js");
-exports = module.exports = ___CSS_LOADER_API_IMPORT___(true);
-// Module
-exports.push([module.i, "", "",{"version":3,"sources":[],"names":[],"mappings":"","file":"app.css"}]);
-
-
-/***/ }),
-
 /***/ "../node_modules/css-loader/dist/cjs.js?!../node_modules/postcss-loader/src/index.js?!../node_modules/sass-loader/lib/loader.js!./leaflet.css":
 /*!*************************************************************************************************************************************************************!*\
   !*** ../node_modules/css-loader/dist/cjs.js??ref--8-1!../node_modules/postcss-loader/src??ref--8-2!../node_modules/sass-loader/lib/loader.js!./leaflet.css ***!
@@ -32080,8 +32064,8 @@ var MapEditorFunction = function MapEditorFunction(_a) {
   var _onChange = function onChange(event, index, fieldName) {
     var _a = event.target,
         name = _a.name,
-        value = _a.value,
         type = _a.type;
+    var value = event.target.value;
 
     if (type === 'checkbox') {
       value = event.target.checked;
@@ -32379,36 +32363,6 @@ var MapPanel = function MapPanel(_a) {
 
 /***/ }),
 
-/***/ "./app.css":
-/*!*****************!*\
-  !*** ./app.css ***!
-  \*****************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-var content = __webpack_require__(/*! !../node_modules/css-loader/dist/cjs.js??ref--8-1!../node_modules/postcss-loader/src??ref--8-2!../node_modules/sass-loader/lib/loader.js!./app.css */ "../node_modules/css-loader/dist/cjs.js?!../node_modules/postcss-loader/src/index.js?!../node_modules/sass-loader/lib/loader.js!./app.css");
-
-if(typeof content === 'string') content = [[module.i, content, '']];
-
-var transform;
-var insertInto;
-
-
-
-var options = {"hmr":true}
-
-options.transform = transform
-options.insertInto = undefined;
-
-var update = __webpack_require__(/*! ../node_modules/style-loader/lib/addStyles.js */ "../node_modules/style-loader/lib/addStyles.js")(content, options);
-
-if(content.locals) module.exports = content.locals;
-
-if(false) {}
-
-/***/ }),
-
 /***/ "./components/EsriDynamicLayer.ts":
 /*!****************************************!*\
   !*** ./components/EsriDynamicLayer.ts ***!
@@ -32578,8 +32532,8 @@ var mockSensorsSmall = [{
   COORDINATE_ID: 10,
   INSTRUMENT_ID: 10,
   SAMPLER_ID: 'NULL',
-  SAMPLE_TYPE: "pressure",
-  TYPE: "pressure",
+  SAMPLE_TYPE: 'pressure',
+  TYPE: 'pressure',
   MIN: 14,
   MAX: 14,
   MEAN: 14,
@@ -32592,8 +32546,8 @@ var mockSensorsSmall = [{
   COORDINATE_ID: 20,
   INSTRUMENT_ID: 20,
   SAMPLER_ID: 'NULL',
-  SAMPLE_TYPE: "diceplacement",
-  TYPE: "pressure",
+  SAMPLE_TYPE: 'diceplacement',
+  TYPE: 'pressure',
   MIN: 5,
   MAX: 5,
   MEAN: 5,
@@ -32606,8 +32560,8 @@ var mockSensorsSmall = [{
   COORDINATE_ID: 30,
   INSTRUMENT_ID: 30,
   SAMPLER_ID: 'NULL',
-  SAMPLE_TYPE: "pressure",
-  TYPE: "pressure",
+  SAMPLE_TYPE: 'pressure',
+  TYPE: 'pressure',
   MIN: 8,
   MAX: 8,
   MEAN: 8,
@@ -32620,8 +32574,8 @@ var mockSensorsSmall = [{
   COORDINATE_ID: 40,
   INSTRUMENT_ID: 40,
   SAMPLER_ID: 'NULL',
-  SAMPLE_TYPE: "pressure",
-  TYPE: "pressure",
+  SAMPLE_TYPE: 'pressure',
+  TYPE: 'pressure',
   MIN: 10,
   MAX: 11,
   MEAN: 11,
@@ -32768,9 +32722,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _MapEditor__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./MapEditor */ "./MapEditor.tsx");
 /* harmony import */ var leaflet_css__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! leaflet.css */ "./leaflet.css");
 /* harmony import */ var leaflet_css__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(leaflet_css__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var app_css__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! app.css */ "./app.css");
-/* harmony import */ var app_css__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(app_css__WEBPACK_IMPORTED_MODULE_4__);
-
 
 
 
@@ -32826,14 +32777,14 @@ var extractSensorsFromGrafanaStream = function extractSensorsFromGrafanaStream(d
     }
 
     var us = {
-      "id": s.fields[0].values.buffer[i],
-      "coord": [s.fields[1].values.buffer[i], s.fields[2].values.buffer[i]],
-      "coordSystem": s.fields[3].values.buffer[i],
-      "sampleType": s.fields[4].values.buffer[i],
-      "min": s.fields[5].values.buffer[i],
-      "max": s.fields[6].values.buffer[i],
-      "mean": s.fields[7].values.buffer[i],
-      "instrumentType": s.fields[8].values.buffer[i]
+      id: s.fields[0].values.buffer[i],
+      coord: [s.fields[1].values.buffer[i], s.fields[2].values.buffer[i]],
+      coordSystem: s.fields[3].values.buffer[i],
+      sampleType: s.fields[4].values.buffer[i],
+      min: s.fields[5].values.buffer[i],
+      max: s.fields[6].values.buffer[i],
+      mean: s.fields[7].values.buffer[i],
+      instrumentType: s.fields[8].values.buffer[i]
     };
     tmpOutp.push(us);
   }
@@ -32860,14 +32811,14 @@ var strutcureMocDataObjects = function strutcureMocDataObjects(mocData) {
 
   for (var i = 0; i < len; i++) {
     var s = {
-      "id": mocData[i].INSTRUMENT_ID,
-      "coord": [mocData[i].XPOS, mocData[i].YPOS],
-      "coordSystem": mocData[i].COORDINATE_SYSTEM,
-      "sampleType": mocData[i].SAMPLE_TYPE,
-      "instrumentType": mocData[i].TYPE,
-      "max": mocData[i].MAX,
-      "min": mocData[i].MIN,
-      "mean": mocData[i].MEAN
+      id: mocData[i].INSTRUMENT_ID,
+      coord: [mocData[i].XPOS, mocData[i].YPOS],
+      coordSystem: mocData[i].COORDINATE_SYSTEM,
+      sampleType: mocData[i].SAMPLE_TYPE,
+      instrumentType: mocData[i].TYPE,
+      max: mocData[i].MAX,
+      min: mocData[i].MIN,
+      mean: mocData[i].MEAN
     };
     tmpOutp.push(s);
   }

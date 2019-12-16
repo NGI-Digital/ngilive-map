@@ -15,6 +15,6 @@ const projectAndRemapSensor = (sensor: sensor): sensor => {
   sensor.coord = [coord[1], coord[0]];
   sensor.coordSystem = 'wgs84';
   return sensor;
-}
+};
 
 export default projectAndRemapSensor;

@@ -20,7 +20,8 @@ const MapEditorFunction: React.FC<PanelEditorProps<MapEditorFunctionProps>> = ({
   };
 
   const onChange = (event: any, index: number, fieldName?: string) => {
-    let { name, value, type } = event.target;
+    const { name, type } = event.target;
+    let { value } = event.target;
     if (type === 'checkbox') {
       value = event.target.checked;
     }
@@ -52,7 +53,7 @@ const MapEditorFunction: React.FC<PanelEditorProps<MapEditorFunctionProps>> = ({
           <br></br>
 
           {layers.map((l, index) => {
-            let checkedAttr = { checked: true };
+            const checkedAttr = { checked: true };
             return (
               <>
                 <PanelOptionsGrid>

@@ -19,9 +19,9 @@ import { sensorSymbol } from 'types/sensorSymbol';
 import { PanelProps } from '@grafana/data';
 
 const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
-  let mapElement = useRef<any>();
-  let mainMap = useRef<any>();
-  let position: [number, number] = [60, 10.5];
+  const mapElement = useRef<any>();
+  const mainMap = useRef<any>();
+  const position: [number, number] = [60, 10.5];
 
   const [sensors, setSensors] = useState<sensor[]>([]);
   const [layers, setLayers] = useState<mapLayer[]>([]);
@@ -37,7 +37,7 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
     const mapSensors: sensor[] = unConvSensors.map(element => projectAndRemapSensor(element));
     const sensorsExtent: envelope = getSensorsExtent(mapSensors);
     setSensors(mapSensors);
-    let m = mainMap.current.leafletElement as LeafletMap;
+    const m = mainMap.current.leafletElement as LeafletMap;
     m.fitBounds([
       [sensorsExtent.minX, sensorsExtent.minY],
       [sensorsExtent.maxX, sensorsExtent.maxY],

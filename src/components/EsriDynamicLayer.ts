@@ -7,7 +7,7 @@ const EsriDynamicLayer = (props: any) => {
   const leaflet = useLeaflet();
 
   useEffect(() => {
-    let layer = esri.dynamicMapLayer({
+    const layer = esri.dynamicMapLayer({
       url: props.url,
       maxZoom: 20,
     });

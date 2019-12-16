@@ -5,7 +5,7 @@ const strutcureMocDataObjects = (mocData: MocSensor[]): sensor[] => {
   const len = mocData.length;
   const tmpOutp: sensor[] = [];
   for (let i = 0; i < len; i++) {
-    let s: sensor = {
+    const s: sensor = {
       id: mocData[i].INSTRUMENT_ID,
       coord: [mocData[i].XPOS, mocData[i].YPOS],
       coordSystem: mocData[i].COORDINATE_SYSTEM,

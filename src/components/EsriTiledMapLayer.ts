@@ -7,7 +7,7 @@ const EsriTiledMapLayer = (props: any) => {
   const leaflet = useLeaflet();
 
   useEffect(() => {
-    let layer = esri.tiledMapLayer({
+    const layer = esri.tiledMapLayer({
       url: props.url,
       maxZoom: 18,
     });

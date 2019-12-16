@@ -1,5 +1,5 @@
 const defineProjectionZones = () => {
-  let zoneDefinitions = [];
+  const zoneDefinitions = [];
   for (let i = 5; i <= 30; i++) {
     zoneDefinitions.push([
       `EPSG:51${i < 10 ? '0' : ''}${i}`,

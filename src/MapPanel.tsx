@@ -44,7 +44,7 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
     ]);
   }, [data]);
 
-  const LayersElement: React.FC<any> = ({ layer }) => {
+  function layersElement(layer: any) {
     switch (layer.type) {
       case 'WMSLayer':
         return (
@@ -75,33 +75,39 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
       default:
         return null;
     }
-  };
+  }
+
+  function LayersElements(props: any) {
+    const layerElements = props.layers.map((layer: any) => {
+      if (layer.isBaseMap) {
+        return (
+          <LayersControl.BaseLayer name={layer.name} checked={layer.isVisible}>
+            {layersElement(layer)}
+          </LayersControl.BaseLayer>
+        );
+      } else {
+        return (
+          <LayersControl.Overlay name={layer.name} checked={layer.isVisible}>
+            {layersElement(layer)}
+          </LayersControl.Overlay>
+        );
+      }
+    });
+    return (
+      <LayersControl ref={mapElement} position="bottomright">
+        {layerElements}
+      </LayersControl>
+    );
+  }
 
   return (
     <Map ref={mainMap} center={position} zoom={8} maxZoom={18} style={{ height: height, width: width }}>
-      <LayersControl ref={mapElement} position="bottomright">
-        {layers.map(layer => {
-          if (layer.isBaseMap) {
-            return (
-              <LayersControl.BaseLayer name={layer.name} checked={layer.isVisible}>
-                <LayersElement layer={layer}></LayersElement>
-              </LayersControl.BaseLayer>
-            );
-          } else {
-            return (
-              <LayersControl.Overlay name={layer.name} checked={layer.isVisible}>
-                <LayersElement layer={layer}></LayersElement>
-              </LayersControl.Overlay>
-            );
-          }
-        })}
-      </LayersControl>
+      <LayersElements layers={layers}></LayersElements>
 
       {sensors.map(c => {
         let settings = typeSymbolColors.find(t => t.type === c.instrumentType);
         if (!settings) {
           settings = typeSymbolColors.find(t => t.type === 'default') as sensorSymbol;
-          console.log('Using default for', c.instrumentType);
         }
         return (
           <CircleMarker color={settings.color} radius={settings.size} center={c.coord as [number, number]}>

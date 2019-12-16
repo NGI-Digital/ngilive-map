@@ -9,7 +9,7 @@ const extractSensorsFromGrafanaStream = (data: any): sensor[] => {
     if (s.fields[1].values.buffer[i] === 0 || s.fields[2].values.buffer[i] === 0) {
       continue;
     }
-    let us: sensor = {
+    const us: sensor = {
       id: s.fields[0].values.buffer[i],
       coord: [s.fields[1].values.buffer[i], s.fields[2].values.buffer[i]],
       coordSystem: s.fields[3].values.buffer[i],

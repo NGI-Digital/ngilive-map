@@ -1,14 +1,13 @@
 {
   "type": "panel",
-  "name": "NGI Map",
-  "id": "ngi-map-panel",
-
+  "name": "NGI Live Map",
+  "id": "ngilive-map",
   "info": {
     "description": "Map",
     "author": {
       "name": "NGI"
     },
-    "keywords": ["Simple"],
+    "keywords": ["Map"],
     "logos": {
       "small": "img/logo.svg",
       "large": "img/logo.svg"

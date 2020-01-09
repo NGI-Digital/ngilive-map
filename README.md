@@ -15,6 +15,17 @@ Build for production
 yarn build
 ```
 
+Create a zip file containing the ngilive-map folder ( the root folder of the zip file has to be ngilive-map ) except from .git, releases and node modules. 
+For some reason the grafana installer seems to be failing when using "send to compressed folder" in Windows, so another tool like 7zip is recommended. 
+
+Publish the new zip file as a release on Github. 
+
+Test released version in local Docker
+```
+grafana-cli --debug --pluginUrl=https://github.com/NGI-Digital/ngilive-map/releases/download/v0.2/ngilive-map-0.2.zip plugins install ngilive-map 
+```
+
+
 Set up Grafana environment locally 
 ```
 docker volume create grafana-storage

@@ -7,16 +7,18 @@ import { mapLayer } from 'types/mapLayer';
 import { mockLayers } from 'data/mockLayers';
 import EsriTiledMapLayer from 'components/EsriTiledMapLayer';
 import EsriDynamicLayer from 'components/EsriDynamicLayer';
+// import LegendControl from 'components/LegendControl';
 import extractSensorsFromGrafanaStream from 'utilities/grafanaDataObjects';
 import { sensor } from 'types/sensor';
 import { mockSensorsSmall } from 'data/mockDataSmall';
 import strutcureMocDataObjects from 'utilities/mocDataObjectsConverter';
-import { Map as LeafletMap } from 'leaflet';
+import { Map as LeafletMap, Control } from 'leaflet';
 import { envelope } from 'types/envelope';
 import { getSensorsExtent } from 'utilities/utils';
 import { typeSymbolColors } from 'data/defualtSensorColors';
 import { sensorSymbol } from 'types/sensorSymbol';
 import { PanelProps } from '@grafana/data';
+import LegendControl from 'components/LegendControl';
 
 const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
   const mapElement = useRef<any>();
@@ -27,21 +29,31 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
   const [layers, setLayers] = useState<mapLayer[]>([]);
 
   useEffect(() => {
+    console.log("Define projecteions and setting layers");
     proj4.defs(defineProjectionZones());
     const configLayerList = options.layers;
     setLayers(options.useMockLayers ? mockLayers : configLayerList);
+    console.log("Define projecteions and setting layers");
   }, []);
 
   useEffect(() => {
+    console.log("Got data");
     const unConvSensors = options.useMockData ? strutcureMocDataObjects(mockSensorsSmall) : extractSensorsFromGrafanaStream(data);
+    console.log("Extracted sensors");
     const mapSensors: sensor[] = unConvSensors.map(element => projectAndRemapSensor(element));
+    console.log("Projecteded and remapped sensors");
     const sensorsExtent: envelope = getSensorsExtent(mapSensors);
+    console.log("Calculated sensor extent");
     setSensors(mapSensors);
-    const m = mainMap.current.leafletElement as LeafletMap;
-    m.fitBounds([
-      [sensorsExtent.minX, sensorsExtent.minY],
-      [sensorsExtent.maxX, sensorsExtent.maxY],
-    ]);
+    console.log("mapSensors: ", mapSensors);
+    if (mapSensors.length > 0) {
+      const m = mainMap.current.leafletElement as LeafletMap;
+      m.fitBounds([
+        [sensorsExtent.minX, sensorsExtent.minY],
+        [sensorsExtent.maxX, sensorsExtent.maxY],
+      ]);
+    }
+    
   }, [data]);
 
   function layersElement(layer: any) {
@@ -97,13 +109,29 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
       <LayersControl ref={mapElement} position="bottomright">
         {layerElements}
       </LayersControl>
-    );
+    );  
   }
+
+  // function TOC(props: any) {
+  //   return (
+      
+      
+  //       <LegendControl  className="supportLegend">
+  //         <ul className="legend">
+  //               <li className="legendItem1">Strong Support</li>
+  //               <li className="legendItem2">Weak Support</li>
+  //               <li className="legendItem3">Weak Oppose</li>
+  //               <li className="legendItem4">Strong Oppose</li>
+  //             </ul>
+  //     </LegendControl>
+  //   );
+  // }
 
   return (
     <Map ref={mainMap} center={position} zoom={8} maxZoom={18} style={{ height: height, width: width }}>
       <LayersElements layers={layers}></LayersElements>
-
+      {/* <TOC></TOC> */}
+      <LegendControl symbols={typeSymbolColors.filter(ts => sensors.find(s => s.instrumentType === ts.type) !== null)}></LegendControl>
       {sensors.map(c => {
         let settings = typeSymbolColors.find(t => t.type === c.instrumentType);
         if (!settings) {
@@ -114,7 +142,7 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
             <Popup>
               <b>Instrument type: {c.instrumentType}</b>
               <br />
-              <b>Sampe type: {c.sampleType}</b>
+              <b>Sample type: {c.sampleType}</b>
               <br />
               <b>InstrumentID: {c.id}</b>
               <br />

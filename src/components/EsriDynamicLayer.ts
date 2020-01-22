@@ -11,7 +11,6 @@ const EsriDynamicLayer = (props: any) => {
       url: props.url,
       maxZoom: 20,
     });
-
     layer.addTo(leaflet.layerContainer as Map);
   }, [props]);
 

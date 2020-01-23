@@ -4,55 +4,55 @@ export const typeSymbolColors: sensorSymbol[] = [
   {
     type: 'Grunnvann',
     markerType: 'CircleMarker',
-    color: '#0000ff',
+    color: '#114f8a',
     size: 3,
   },
   {
     type: 'Lufttemp',
     markerType: 'CircleMarker',
-    color: '#0f00ff',
+    color: '#5496ab',
     size: 3,
   },
   {
     type: 'Lufttrykk',
     markerType: 'CircleMarker',
-    color: '#000055',
+    color: '#733275',
     size: 3,
   },
   {
     type: 'Miljø',
     markerType: 'CircleMarker',
-    color: '#0ff00',
+    color: '#0ff000',
     size: 3,
   },
   {
     type: 'Nedbør',
     markerType: 'CircleMarker',
-    color: '#ff00ff',
+    color: '#1546cf',
     size: 3,
   },
   {
     type: 'Pakkertrykk',
     markerType: 'CircleMarker',
-    color: '#0000ff',
+    color: '#adc71a',
     size: 3,
   },
   {
     type: 'Poretrykk',
     markerType: 'CircleMarker',
-    color: '#ff0000',
+    color: '#f7550a',
     size: 3,
   },
   {
     type: 'Vannstand',
     markerType: 'CircleMarker',
-    color: '#5500ff',
+    color: '#4e00f7',
     size: 3,
   },
   {
     type: 'Vannstrøm',
     markerType: 'CircleMarker',
-    color: '#0055ff',
+    color: '#03cafc',
     size: 3,
   },
   {
@@ -88,7 +88,7 @@ export const typeSymbolColors: sensorSymbol[] = [
   {
     type: 'default',
     markerType: 'CircleMarker',
-    color: '#0000ff',
+    color: '#f7b100',
     size: 3,
   },
 ];

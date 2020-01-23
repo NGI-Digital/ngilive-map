@@ -45,7 +45,8 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
     const sensorsExtent: envelope = getSensorsExtent(mapSensors);
     console.log("Calculated sensor extent");
     setSensors(mapSensors);
-    console.log("mapSensors: ", mapSensors);
+    //console.log("data: ", data);
+    console.log("typeSymbolColors", typeSymbolColors);
     if (mapSensors.length > 0) {
       const m = mainMap.current.leafletElement as LeafletMap;
       m.fitBounds([
@@ -53,6 +54,7 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
         [sensorsExtent.maxX, sensorsExtent.maxY],
       ]);
     }
+
     
   }, [data]);
 
@@ -130,8 +132,9 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
   return (
     <Map ref={mainMap} center={position} zoom={8} maxZoom={18} style={{ height: height, width: width }}>
       <LayersElements layers={layers}></LayersElements>
-      {/* <TOC></TOC> */}
-      <LegendControl symbols={typeSymbolColors.filter(ts => sensors.find(s => s.instrumentType === ts.type) !== null)}></LegendControl>
+      <LegendControl symbols={typeSymbolColors.filter(ts => sensors.find(s => s.instrumentType === ts.type))}></LegendControl>     
+      
+      {/*<LegendControl symbols={typeSymbolColors.filter(ts => sensors.find(s => s.instrumentType === ts.type) !== null)}></LegendControl>   */}
       {sensors.map(c => {
         let settings = typeSymbolColors.find(t => t.type === c.instrumentType);
         if (!settings) {

@@ -19,6 +19,9 @@ import { typeSymbolColors } from 'data/defualtSensorColors';
 import { sensorSymbol } from 'types/sensorSymbol';
 import { PanelProps } from '@grafana/data';
 import LegendControl from 'components/LegendControl';
+import MarkerCluster from 'components/MarkerCluster';
+import 'leaflet/dist/leaflet.css';
+//import 'leaflet.css';
 
 const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
   const mapElement = useRef<any>();
@@ -114,6 +117,32 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
     );  
   }
 
+  // const createClusterCustomIcon = (cluster) => {
+  //   const count = cluster.getChildCount();
+  //   let size = 'LargeXL';
+  
+  //   if (count < 10) {
+  //     size = 'Small';
+  //   }
+  //   else if (count >= 10 && count < 100) {
+  //     size = 'Medium';
+  //   }
+  //   else if (count >= 100 && count < 500) {
+  //     size = 'Large';
+  //   }
+  //   const options = {
+  //     cluster: `markerCluster${size}`,
+  //   };
+  
+  //   return L.divIcon({
+  //     html:
+  //       `<div>
+  //         <span class="markerClusterLabel">${count}</span>
+  //       </div>`,
+  //     className: `${options.cluster}`,
+  //   });
+  // };
+
   // function TOC(props: any) {
   //   return (
       
@@ -134,6 +163,8 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
       <LayersElements layers={layers}></LayersElements>
       <LegendControl symbols={typeSymbolColors.filter(ts => sensors.find(s => s.instrumentType === ts.type))}></LegendControl>     
       
+      <MarkerCluster sensors={sensors}></MarkerCluster>
+
       {/*<LegendControl symbols={typeSymbolColors.filter(ts => sensors.find(s => s.instrumentType === ts.type) !== null)}></LegendControl>   */}
       {sensors.map(c => {
         let settings = typeSymbolColors.find(t => t.type === c.instrumentType);
@@ -141,32 +172,34 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
           settings = typeSymbolColors.find(t => t.type === 'default') as sensorSymbol;
         }
         return (
-          <CircleMarker color={settings.color} radius={settings.size} center={c.coord as [number, number]}>
-            <Popup>
-              <b>Instrument type: {c.instrumentType}</b>
-              <br />
-              <b>Sample type: {c.sampleType}</b>
-              <br />
-              <b>InstrumentID: {c.id}</b>
-              <br />
-              <table>
-                <tr>
-                  <td>Max:</td>
-                  <td>{c.min}</td>
-                </tr>
-                <tr>
-                  <td>Min:</td>
-                  <td>{c.max}</td>
-                </tr>
-                <tr>
-                  <td>Mean:</td>
-                  <td>{c.mean}</td>
-                </tr>
-              </table>
-            </Popup>
-          </CircleMarker>
+          <></>
+          // <CircleMarker color={settings.color} radius={settings.size} center={c.coord as [number, number]}>
+          //   <Popup>
+          //     <b>Instrument type: {c.instrumentType}</b>
+          //     <br />
+          //     <b>Unit: {c.sampleType}</b>
+          //     <br />
+          //     <b>InstrumentID: {c.id}</b>
+          //     <br />
+          //     <table>
+          //       <tr>
+          //         <td>Max:</td>
+          //         <td>{c.min}</td>
+          //       </tr>
+          //       <tr>
+          //         <td>Min:</td>
+          //         <td>{c.max}</td>
+          //       </tr>
+          //       <tr>
+          //         <td>Mean:</td>
+          //         <td>{c.mean}</td>
+          //       </tr>
+          //     </table>
+          //   </Popup>
+          // </CircleMarker>
         );
       })}
+      
     </Map>
   );
 };

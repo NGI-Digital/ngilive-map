@@ -43,7 +43,7 @@ const LegendControl: React.FC<LegendControlProps> = ({symbols}) => {
   }
 
   useEffect(() => {
-    console.log("her", symbols)
+    //console.log("her", symbols)
     if(control) {
     control.onAdd = (map) => {
       return createContent();
@@ -64,7 +64,7 @@ const LegendControl: React.FC<LegendControlProps> = ({symbols}) => {
   useEffect(() => {
     const c = new L.Control({position: 'topright'});
     setControl(c);
-    console.log("Grm");
+    //console.log("Grm");
     // control.addTo(leaflet.map as L.Map);
   }, [])
 

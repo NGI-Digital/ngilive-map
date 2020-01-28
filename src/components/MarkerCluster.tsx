@@ -31,20 +31,22 @@ const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors }) => {
       // PUT YOUR JSX FOR THE COMPONENT HERE:
 
       <div>
-         <b>Measurand: {s.instrumentType}</b>
-               <br />
-               <b>Unit: {s.sampleType}</b>
-               <br />
-               <b>Instrument id: {s.id}</b>
+         <b>Instrumentnavn</b> <br /> <br />
+               {s.instrumentType} [{s.sampleType}]
+               <a href="https://www.w3schools.com" target="_blank">Visit W3Schools</a>
                <br />
                <table>
                  <tr>
+                   <td>Last value:</td>
+                   <td>xxxx</td>
+                 </tr>
+                 <tr>
                    <td>Max:</td>
-                   <td>{s.min}</td>
+                   <td>{s.max}</td>
                  </tr>
                  <tr>
                    <td>Min:</td>
-                   <td>{s.max}</td>
+                   <td>{s.min}</td>
                  </tr>
                  <tr>
                    <td>Mean:</td>
@@ -64,6 +66,10 @@ const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors }) => {
               });
     //console.log("mcg", mcg);
     setMarkerGroup(mcg);
+    
+    // (leaflet.map as Map).addLayer(markerGroup);
+
+    // console.log("Markergroup added: ", markerGroup);
 
     // iconCreateFunction: function(cluster) {
     //   return L.divIcon({ html: '<b>' + cluster.getChildCount() + '</b>' });
@@ -76,6 +82,7 @@ const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors }) => {
     //console.log("markerGroup",markerGroup);
     if (markerGroup) {
       {
+        markerGroup.clearLayers();
         // console.log("L.icon", L.icon);
         // let DefaultIcon = L.icon({
         //     iconUrl: L.icon as any
@@ -96,9 +103,16 @@ const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors }) => {
         markerGroup.addLayer(marker);
         
         });
+
+        //(leaflet.map as Map).removeLayer(markerGroup);
+        (leaflet.map as Map).addLayer(markerGroup);
+
+        console.log("Markergroup added: ", markerGroup);
       }
-      (leaflet.map as Map).addLayer(markerGroup);
-      console.log("Markergroup added: ", markerGroup);
+      //(leaflet.map as Map).removeLayer(markerGroup);
+      // (leaflet.map as Map).addLayer(markerGroup);
+
+      // console.log("Markergroup added: ", markerGroup);
       // for (var i = 0; i < addressPoints.length; i++) {
       //     var a = addressPoints[i];
       //     var title = a[2];

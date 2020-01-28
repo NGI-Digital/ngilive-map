@@ -31,14 +31,13 @@ const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors }) => {
       // PUT YOUR JSX FOR THE COMPONENT HERE:
 
       <div>
-         <b>Instrumentnavn</b> <br /> <br />
-               {s.instrumentType} [{s.sampleType}]
-               <a href="https://www.w3schools.com" target="_blank">Visit W3Schools</a>
+         <b>{s.name}</b> <br /> <br />
+               {s.instrumentType} [{s.unit}]
                <br />
                <table>
                  <tr>
                    <td>Last value:</td>
-                   <td>xxxx</td>
+                   <td>{s.lastValue}</td>
                  </tr>
                  <tr>
                    <td>Max:</td>

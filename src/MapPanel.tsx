@@ -117,46 +117,7 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
     );  
   }
 
-  // const createClusterCustomIcon = (cluster) => {
-  //   const count = cluster.getChildCount();
-  //   let size = 'LargeXL';
-  
-  //   if (count < 10) {
-  //     size = 'Small';
-  //   }
-  //   else if (count >= 10 && count < 100) {
-  //     size = 'Medium';
-  //   }
-  //   else if (count >= 100 && count < 500) {
-  //     size = 'Large';
-  //   }
-  //   const options = {
-  //     cluster: `markerCluster${size}`,
-  //   };
-  
-  //   return L.divIcon({
-  //     html:
-  //       `<div>
-  //         <span class="markerClusterLabel">${count}</span>
-  //       </div>`,
-  //     className: `${options.cluster}`,
-  //   });
-  // };
-
-  // function TOC(props: any) {
-  //   return (
-      
-      
-  //       <LegendControl  className="supportLegend">
-  //         <ul className="legend">
-  //               <li className="legendItem1">Strong Support</li>
-  //               <li className="legendItem2">Weak Support</li>
-  //               <li className="legendItem3">Weak Oppose</li>
-  //               <li className="legendItem4">Strong Oppose</li>
-  //             </ul>
-  //     </LegendControl>
-  //   );
-  // }
+ 
 
   return (
     <Map ref={mainMap} center={position} zoom={8} maxZoom={18} style={{ height: height, width: width }}>
@@ -173,30 +134,6 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
         }
         return (
           <></>
-          // <CircleMarker color={settings.color} radius={settings.size} center={c.coord as [number, number]}>
-          //   <Popup>
-          //     <b>Instrument type: {c.instrumentType}</b>
-          //     <br />
-          //     <b>Unit: {c.sampleType}</b>
-          //     <br />
-          //     <b>InstrumentID: {c.id}</b>
-          //     <br />
-          //     <table>
-          //       <tr>
-          //         <td>Max:</td>
-          //         <td>{c.min}</td>
-          //       </tr>
-          //       <tr>
-          //         <td>Min:</td>
-          //         <td>{c.max}</td>
-          //       </tr>
-          //       <tr>
-          //         <td>Mean:</td>
-          //         <td>{c.mean}</td>
-          //       </tr>
-          //     </table>
-          //   </Popup>
-          // </CircleMarker>
         );
       })}
       

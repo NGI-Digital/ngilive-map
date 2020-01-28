@@ -30,3 +30,5 @@ Set up Grafana environment locally
 ```
 docker volume create grafana-storage
 docker run -d -e "GF_PATHS_PLUGINS=/opt/grafana-plugins" -v grafana-storage=/var/lib/grafana -v <path to plugin folder>/dist:/opt/grafana-plugins -p 3000:3000 grafana/grafana
+
+docker run -d --name=grafanabeta66 -e "GF_PATHS_PLUGINS=/opt/grafana-plugins" -v grafana-storage=/var/lib/grafana -v C:\Utvikling\github\ngilive-map\dist:/opt/grafana-plugins -p 3000:3000 grafana/grafana:6.6.0-beta1

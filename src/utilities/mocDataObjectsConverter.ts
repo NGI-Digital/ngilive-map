@@ -6,10 +6,11 @@ const strutcureMocDataObjects = (mocData: MocSensor[]): sensor[] => {
   const tmpOutp: sensor[] = [];
   for (let i = 0; i < len; i++) {
     const s: sensor = {
+      name: mocData[i].INSTRUMENT_NAME,
       id: mocData[i].INSTRUMENT_ID,
       coord: [mocData[i].XPOS, mocData[i].YPOS],
       coordSystem: mocData[i].COORDINATE_SYSTEM,
-      sampleType: mocData[i].SAMPLE_TYPE,
+      unit: mocData[i].SAMPLE_TYPE,
       instrumentType: mocData[i].TYPE,
       max: mocData[i].MAX,
       min: mocData[i].MIN,

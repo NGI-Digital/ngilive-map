@@ -17,7 +17,7 @@ export type MocSensor = {
 
 export const mockSensorsSmall: MocSensor[] = [
   {
-    INSTRUMENT_NAME: "ab",
+    INSTRUMENT_NAME: 'ab',
     COORDINATE_ID: 10,
     INSTRUMENT_ID: 10,
     SAMPLER_ID: 'NULL',
@@ -33,7 +33,7 @@ export const mockSensorsSmall: MocSensor[] = [
     DEPTH: 5.5,
   },
   {
-    INSTRUMENT_NAME: "ab",
+    INSTRUMENT_NAME: 'ab',
     COORDINATE_ID: 20,
     INSTRUMENT_ID: 20,
     SAMPLER_ID: 'NULL',
@@ -49,7 +49,7 @@ export const mockSensorsSmall: MocSensor[] = [
     DEPTH: 123.1,
   },
   {
-    INSTRUMENT_NAME: "ab",
+    INSTRUMENT_NAME: 'ab',
     COORDINATE_ID: 30,
     INSTRUMENT_ID: 30,
     SAMPLER_ID: 'NULL',
@@ -65,7 +65,7 @@ export const mockSensorsSmall: MocSensor[] = [
     DEPTH: 179.5,
   },
   {
-    INSTRUMENT_NAME: "ab",
+    INSTRUMENT_NAME: 'ab',
     COORDINATE_ID: 40,
     INSTRUMENT_ID: 40,
     SAMPLER_ID: 'NULL',

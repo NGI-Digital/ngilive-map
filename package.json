@@ -1,6 +1,6 @@
 {
   "name": "ngilive-map",
-  "version": "0.2",
+  "version": "0.3",
   "description": "NGI Grafana Map panel",
   "scripts": {
     "build": "grafana-toolkit plugin:build",

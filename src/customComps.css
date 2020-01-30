@@ -1,43 +1,43 @@
 .rcorners1 {
-    border-radius: 25px;
-    background: rgba(255, 255, 255, 0.7);
-    padding: 10px;
-  }
+  border-radius: 25px;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 10px;
+}
 
-  .markerClusterSmall {
-    border-radius: 20px;
-    font-size: 0.6vw;
-    color: #fff;
-    font-weight: 900;
-    font-family: Open Sans;
-    text-transform: uppercase;
- }
- .markerClusterMedium {
-    border-radius: 40px;
-    font-size: 0.6vw;
-    color: #fff;
-    font-weight: 900;
-    font-family: Open Sans;
-    text-transform: uppercase;
- }
- .markerClusterLarge {
-    border-radius: 70px;
-    font-size: 0.6vw;
-    color: #fff;
-    font-weight: 900;
-    font-family: Open Sans;
-    text-transform: uppercase;
- }
- .markerClusterLargeXL {
-    border-radius: 70px;
-    font-size: 0.6vw;
-    color: #fff;
-    font-weight: 900;
-    font-family: Open Sans;
-    text-transform: uppercase;
- }
- .markerClusterLabel {
-    display: flex;
-    justify-content: center;
-    align-items: center;
- }
+.markerClusterSmall {
+  border-radius: 20px;
+  font-size: 0.6vw;
+  color: #fff;
+  font-weight: 900;
+  font-family: Open Sans;
+  text-transform: uppercase;
+}
+.markerClusterMedium {
+  border-radius: 40px;
+  font-size: 0.6vw;
+  color: #fff;
+  font-weight: 900;
+  font-family: Open Sans;
+  text-transform: uppercase;
+}
+.markerClusterLarge {
+  border-radius: 70px;
+  font-size: 0.6vw;
+  color: #fff;
+  font-weight: 900;
+  font-family: Open Sans;
+  text-transform: uppercase;
+}
+.markerClusterLargeXL {
+  border-radius: 70px;
+  font-size: 0.6vw;
+  color: #fff;
+  font-weight: 900;
+  font-family: Open Sans;
+  text-transform: uppercase;
+}
+.markerClusterLabel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

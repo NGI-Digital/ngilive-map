@@ -23,8 +23,10 @@ const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors }) => {
   function createMarkerPopup(s: sensor) {
     const jsx = (
       <div>
-        <b>{s.name}</b> <br /> <br />
+        <b>{s.name}</b>
+        <br />
         {s.instrumentType} [{s.unit}]
+        <br />
         <br />
         <table>
           <tr>

@@ -28,7 +28,11 @@
   },
   "dependencies": {
     "@types/esri-leaflet": "^2.1.5",
+    "@types/react-leaflet-markercluster": "^2.0.0",
     "esri-leaflet": "^2.3.2",
+    "leaflet.markercluster": "^1.4.1",
+    "overlapping-marker-spiderfier-leaflet": "^0.2.7",
+    "react-leaflet-markercluster": "^1.1.8",
     "react-leaflet-street-view": "^1.0.8"
   }
 }

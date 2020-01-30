@@ -123,20 +123,7 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
     <Map ref={mainMap} center={position} zoom={8} maxZoom={18} style={{ height: height, width: width }}>
       <LayersElements layers={layers}></LayersElements>
       <LegendControl symbols={typeSymbolColors.filter(ts => sensors.find(s => s.instrumentType === ts.type))}></LegendControl>     
-      
       <MarkerCluster sensors={sensors}></MarkerCluster>
-
-      {/*<LegendControl symbols={typeSymbolColors.filter(ts => sensors.find(s => s.instrumentType === ts.type) !== null)}></LegendControl>   */}
-      {sensors.map(c => {
-        let settings = typeSymbolColors.find(t => t.type === c.instrumentType);
-        if (!settings) {
-          settings = typeSymbolColors.find(t => t.type === 'default') as sensorSymbol;
-        }
-        return (
-          <></>
-        );
-      })}
-      
     </Map>
   );
 };

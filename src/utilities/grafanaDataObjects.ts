@@ -1,12 +1,11 @@
 import { sensor } from 'types/sensor';
-import { FilterFieldsByNameTransformerOptions } from '@grafana/data';
+//import { FilterFieldsByNameTransformerOptions } from '@grafana/data';
 
 export interface IHash {
   [fieldName: string]: number;
 }
 
 function getFieldIndex(fieldName: string, fieldsArray: any) {
-  //console.log("fieldsArray", fieldsArray);
   const numOfColumns = fieldsArray.length;
   for (let i = 0; i < numOfColumns; i++) {
       if (fieldsArray[i].name === fieldName) {
@@ -16,15 +15,13 @@ function getFieldIndex(fieldName: string, fieldsArray: any) {
   return -1;
 }
 
-function getLastValueForInstrumentID(instrumentID: string, dataArray: any) {
+function getLastValueForInstrumentID(instrumentID: string, dataArray: any, instrument_id_field_index: number, last_value_field_index: number) {
   const numRecords = dataArray.fields[0].values.buffer.length;
   let rowNr: number = 0;
-
-  //console.log("instrument_id",instrumentID);
-  //console.log("lastValues:", dataArray);
+  
 
   for (let i = 0; i < numRecords; i++) {
-    if (instrumentID === dataArray.fields[0].values.buffer[i]) {
+    if (instrumentID === dataArray.fields[instrument_id_field_index].values.buffer[i]) {
       rowNr = i;
       break;
     };
@@ -32,7 +29,7 @@ function getLastValueForInstrumentID(instrumentID: string, dataArray: any) {
 
   //console.log("rowNr", rowNr);
   let retValue: number;
-  retValue = dataArray.fields[1].values.buffer[rowNr];
+  retValue = dataArray.fields[last_value_field_index].values.buffer[rowNr];
   return retValue;
 
 }
@@ -40,13 +37,13 @@ function getLastValueForInstrumentID(instrumentID: string, dataArray: any) {
 const extractSensorsFromGrafanaStream = (data: any): sensor[] => {
   console.log("dataobject:" , data);
   const s = data.series[0];
+  // Require a query B with two field instrument_id and last_value
   const lastValues = data.series[1];
   const len = s.fields[0].values.buffer.length;
-  const tmpOutp: sensor[] = [];
+  const returnArray: sensor[] = [];
 
+  //field indexes for main query (A)
   let colonPos: IHash = {};
-  
-
   let colons: string[] = ['instrument_name','instrument_id','xpos','ypos','coordinate_system','unit','min','max','avg','instrument_type','area'];
   colons.forEach( (element: string) =>{
     colonPos[element] = getFieldIndex(element,s.fields);
@@ -56,6 +53,9 @@ const extractSensorsFromGrafanaStream = (data: any): sensor[] => {
   console.log("positions", colonPos);
   console.log("colonPos['instrument_name']", colonPos['instrument_name']);
 
+  // field indexes for query B with last_value for instrument
+  const instrument_id_field_index_QRYB = getFieldIndex("instrument_id",lastValues.fields);
+  const last_value_field_index_QRYB  = getFieldIndex("last_value",lastValues.fields);
 
 
   for (let i = 0; i < len; i++) {
@@ -73,11 +73,12 @@ const extractSensorsFromGrafanaStream = (data: any): sensor[] => {
       mean: s.fields[colonPos['avg']].values.buffer[i],
       instrumentType: s.fields[colonPos['instrument_type']].values.buffer[i],
     };
-    const lastValue: number = getLastValueForInstrumentID(s.fields[colonPos['instrument_id']].values.buffer[i],lastValues);
+    const lastValue: number = getLastValueForInstrumentID(s.fields[colonPos['instrument_id']].values.buffer[i],
+                                                  lastValues,instrument_id_field_index_QRYB,last_value_field_index_QRYB);
     us.lastValue = lastValue;
-    tmpOutp.push(us);
+    returnArray.push(us);
   }
-  return tmpOutp;
+  return returnArray;
 };
 
 export default extractSensorsFromGrafanaStream;

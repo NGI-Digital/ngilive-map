@@ -5,11 +5,11 @@ import ReactDOM from 'react-dom';
 import L from 'leaflet';
 //import { Map } from 'leaflet';
 import React from 'react';
-import { sensorSymbol } from 'types/sensorSymbol';
+import { sensorConfig } from 'types/sensorConfig';
 import '../customComps.css';
 
 type LegendControlProps = {
-  symbols: sensorSymbol[];
+  symbols: sensorConfig[];
 };
 
 const LegendControl: React.FC<LegendControlProps> = ({ symbols }) => {

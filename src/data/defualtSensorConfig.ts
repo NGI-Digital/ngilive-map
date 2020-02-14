@@ -1,94 +1,109 @@
-import { sensorSymbol } from 'types/sensorSymbol';
+import { sensorConfig } from 'types/sensorConfig';
 
-export const typeSymbolColors: sensorSymbol[] = [
+export const sensorTypeConfig: sensorConfig[] = [
   {
     type: 'Grunnvann',
     markerType: 'CircleMarker',
     color: '#114f8a',
     size: 5,
+    showDepth: false,
   },
   {
     type: 'Lufttemp',
     markerType: 'CircleMarker',
     color: '#5496ab',
     size: 5,
+    showDepth: false,
   },
   {
     type: 'Lufttrykk',
     markerType: 'CircleMarker',
     color: '#733275',
     size: 5,
+    showDepth: false,
   },
   {
     type: 'Miljø',
     markerType: 'CircleMarker',
     color: '#0ff000',
     size: 5,
+    showDepth: false,
   },
   {
     type: 'Nedbør',
     markerType: 'CircleMarker',
     color: '#1546cf',
     size: 5,
+    showDepth: false,
   },
   {
     type: 'Pakkertrykk',
     markerType: 'CircleMarker',
     color: '#adc71a',
     size: 5,
+    showDepth: false,
   },
   {
     type: 'Poretrykk',
     markerType: 'CircleMarker',
     color: '#f7550a',
     size: 5,
+    showDepth: true,
   },
   {
     type: 'Vannstand',
     markerType: 'CircleMarker',
     color: '#4e00f7',
     size: 5,
+    showDepth: false,
   },
   {
     type: 'Vannstrøm',
     markerType: 'CircleMarker',
     color: '#03cafc',
     size: 5,
+    showDepth: false,
   },
   {
     type: 'zBat12V',
     markerType: 'CircleMarker',
     color: '#666666',
     size: 5,
+    showDepth: false,
   },
   {
     type: 'zBat15V',
     markerType: 'CircleMarker',
     color: '#666666',
     size: 5,
+    showDepth: false,
   },
   {
     type: 'zBat18V',
     markerType: 'CircleMarker',
     color: '#666666',
     size: 5,
+    showDepth: false,
   },
   {
     type: 'zBat24V',
     markerType: 'CircleMarker',
     color: '#666666',
     size: 5,
+    showDepth: false,
   },
   {
     type: 'zBat3V',
     markerType: 'CircleMarker',
     color: '#666666',
     size: 5,
+    showDepth: false,
   },
   {
     type: 'default',
     markerType: 'CircleMarker',
     color: '#f7b100',
     size: 5,
+    showDepth: false,
   },
 ];

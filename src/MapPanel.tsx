@@ -15,8 +15,8 @@ import strutcureMocDataObjects from 'utilities/mocDataObjectsConverter';
 import { Map as LeafletMap, Control } from 'leaflet';
 import { envelope } from 'types/envelope';
 import { getSensorsExtent } from 'utilities/utils';
-import { typeSymbolColors } from 'data/defualtSensorColors';
-import { sensorSymbol } from 'types/sensorSymbol';
+import { sensorTypeConfig } from 'data/defualtSensorConfig';
+//import { sensorConfig } from 'types/sensorConfig';
 import { PanelProps } from '@grafana/data';
 import LegendControl from 'components/LegendControl';
 import MarkerCluster from 'components/MarkerCluster';
@@ -49,7 +49,7 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
     console.log('Calculated sensor extent');
     setSensors(mapSensors);
     //console.log("data: ", data);
-    console.log('typeSymbolColors', typeSymbolColors);
+    console.log('typeSymbolColors', sensorTypeConfig);
     if (mapSensors.length > 0) {
       const m = mainMap.current.leafletElement as LeafletMap;
       m.fitBounds([
@@ -118,7 +118,7 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
   return (
     <Map ref={mainMap} center={position} zoom={8} maxZoom={18} style={{ height: height, width: width }}>
       <LayersElements layers={layers}></LayersElements>
-      <LegendControl symbols={typeSymbolColors.filter(ts => sensors.find(s => s.instrumentType === ts.type))}></LegendControl>
+      <LegendControl symbols={sensorTypeConfig.filter(ts => sensors.find(s => s.instrumentType === ts.type))}></LegendControl>
       <MarkerCluster sensors={sensors}></MarkerCluster>
     </Map>
   );

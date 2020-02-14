@@ -3,8 +3,8 @@ import { useLeaflet } from 'react-leaflet';
 import { Map } from 'leaflet';
 import L from 'leaflet';
 import { sensor } from 'types/sensor';
-import { typeSymbolColors } from 'data/defualtSensorColors';
-import { sensorSymbol } from 'types/sensorSymbol';
+import { sensorTypeConfig } from 'data/defualtSensorConfig';
+import { sensorConfig } from 'types/sensorConfig';
 import 'leaflet.markercluster';
 import 'leaflet/dist/leaflet.css';
 import '../MarkerCluster.css';
@@ -20,12 +20,12 @@ const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors }) => {
   const leaflet = useLeaflet();
   const [markerGroup, setMarkerGroup] = useState();
 
-  function createMarkerPopup(s: sensor) {
+  function createMarkerPopup(s: sensor, showDepth: boolean) {
     const jsx = (
       <div>
         <b>{s.name}</b>
         <br />
-        {s.instrumentType} [{s.unit}]
+        {s.instrumentType} [{s.unit}]{showDepth ? '<br/>Depth: ' + s.depth : ''}
         <br />
         <br />
         <table>
@@ -64,12 +64,12 @@ const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors }) => {
       {
         markerGroup.clearLayers();
         sensors.map(c => {
-          let settings = typeSymbolColors.find(t => t.type === c.instrumentType);
+          let settings = sensorTypeConfig.find(t => t.type === c.instrumentType);
           if (!settings) {
-            settings = typeSymbolColors.find(t => t.type === 'default') as sensorSymbol;
+            settings = sensorTypeConfig.find(t => t.type === 'default') as sensorConfig;
           }
 
-          const popupStr = createMarkerPopup(c);
+          const popupStr = createMarkerPopup(c, settings.showDepth);
           const marker = L.circleMarker(c.coord as [number, number], { color: settings.color, radius: settings.size });
           marker.bindPopup(popupStr);
           //marker.bindTooltip(popupStr);

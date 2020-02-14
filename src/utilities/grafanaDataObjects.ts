@@ -54,6 +54,7 @@ const extractSensorsFromGrafanaStream = (data: any): sensor[] => {
     'avg',
     'instrument_type',
     'area',
+    'depth',
   ];
   colons.forEach((element: string) => {
     colonPos[element] = getFieldIndex(element, s.fields);
@@ -75,6 +76,7 @@ const extractSensorsFromGrafanaStream = (data: any): sensor[] => {
       id: s.fields[colonPos['instrument_id']].values.buffer[i],
       coord: [s.fields[colonPos['xpos']].values.buffer[i], s.fields[colonPos['ypos']].values.buffer[i]],
       coordSystem: s.fields[colonPos['coordinate_system']].values.buffer[i],
+      depth: s.fields[colonPos['depth']].values.buffer[i],
       unit: s.fields[colonPos['unit']].values.buffer[i],
       min: s.fields[colonPos['min']].values.buffer[i],
       max: s.fields[colonPos['max']].values.buffer[i],

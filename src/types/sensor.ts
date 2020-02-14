@@ -6,6 +6,7 @@ export type sensor = {
   coordSystem: string;
   unit: string;
   instrumentType: string;
+  depth?: number;
   min?: number;
   max?: number;
   mean?: number;

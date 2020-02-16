@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Map, TileLayer, Popup, CircleMarker, LayersControl, WMSTileLayer } from 'react-leaflet';
 import proj4 from 'proj4';
-import projectAndRemapSensor from 'utilities/sensorsProjecteorAndMapper';
+import projectAndRemapLocObject from 'utilities/locObjectProjecteorAndMapper';
 import defineProjectionZones from 'utilities/defineProjectionZones';
 import { mapLayer } from 'types/mapLayer';
 import { mockLayers } from 'data/mockLayers';
@@ -21,6 +21,8 @@ import { PanelProps } from '@grafana/data';
 import LegendControl from 'components/LegendControl';
 import MarkerCluster from 'components/MarkerCluster';
 import 'leaflet/dist/leaflet.css';
+import { webcam } from 'types/webcam';
+import extractWebcamsFromGrafanaStream from 'utilities/webcamsDataObjects';
 //import 'leaflet.css';
 
 const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
@@ -28,6 +30,7 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
   const mainMap = useRef<any>();
   const position: [number, number] = [60, 10.5];
 
+  const [webcams, setWebcams] = useState<webcam[]>([]);
   const [sensors, setSensors] = useState<sensor[]>([]);
   const [layers, setLayers] = useState<mapLayer[]>([]);
 
@@ -43,11 +46,23 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
     console.log('Got data');
     const unConvSensors = options.useMockData ? strutcureMocDataObjects(mockSensorsSmall) : extractSensorsFromGrafanaStream(data);
     console.log('Extracted sensors');
-    const mapSensors: sensor[] = unConvSensors.map(element => projectAndRemapSensor(element));
+    const mapSensors: sensor[] = unConvSensors.map(element => projectAndRemapLocObject(element) as sensor);
     console.log('Projecteded and remapped sensors');
     const sensorsExtent: envelope = getSensorsExtent(mapSensors);
     console.log('Calculated sensor extent');
     setSensors(mapSensors);
+
+    // get webcams
+    if (true) {
+      const unConvWebcams = extractWebcamsFromGrafanaStream(data);
+      console.log('unConvWebcams:', unConvWebcams);
+      console.log('Extracted webcams');
+      const mapWebcams: webcam[] = unConvWebcams.map(element => projectAndRemapLocObject(element) as webcam);
+      console.log('Projecteded and remapped webcams');
+      console.log('webcams:', mapWebcams);
+      setWebcams(mapWebcams);
+    }
+
     //console.log("data: ", data);
     console.log('typeSymbolColors', sensorTypeConfig);
     if (mapSensors.length > 0) {
@@ -120,6 +135,17 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
       <LayersElements layers={layers}></LayersElements>
       <LegendControl symbols={sensorTypeConfig.filter(ts => sensors.find(s => s.instrumentType === ts.type))}></LegendControl>
       <MarkerCluster sensors={sensors}></MarkerCluster>
+      {webcams.map(c => {
+        return (
+          <CircleMarker color="#00ff00" radius={6} center={c.coord as [number, number]}>
+            <Popup>
+              <a href={c.webcamurl} target="_blank">
+                <img src={c.webcamurl} width={200} />
+              </a>
+            </Popup>
+          </CircleMarker>
+        );
+      })}
     </Map>
   );
 };

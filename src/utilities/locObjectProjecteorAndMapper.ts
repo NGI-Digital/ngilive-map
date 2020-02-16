@@ -1,10 +1,11 @@
 import proj4 from 'proj4';
 import { sensor } from '../types/sensor';
+import { webcam } from '../types/webcam';
 
-const projectAndRemapSensor = (sensor: sensor): sensor => {
-  const coordSystem = sensor.coordSystem;
-  const east = sensor.coord[0];
-  const north = sensor.coord[1];
+const projectAndRemapLocObject = (lokObject: sensor | webcam): sensor | webcam => {
+  const coordSystem = lokObject.coordSystem;
+  const east = lokObject.coord[0];
+  const north = lokObject.coord[1];
 
   const isNtm = coordSystem.toLowerCase().indexOf('ntm') !== -1;
   const zoneNumber = coordSystem.substring(3);
@@ -12,9 +13,9 @@ const projectAndRemapSensor = (sensor: sensor): sensor => {
 
   const coord = proj4(fromCoordSys, 'EPSG:4326', [Math.min(east, north), Math.max(east, north)]);
 
-  sensor.coord = [coord[1], coord[0]];
-  sensor.coordSystem = 'wgs84';
-  return sensor;
+  lokObject.coord = [coord[1], coord[0]];
+  lokObject.coordSystem = 'wgs84';
+  return lokObject;
 };
 
-export default projectAndRemapSensor;
+export default projectAndRemapLocObject;

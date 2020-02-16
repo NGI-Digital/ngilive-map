@@ -25,7 +25,13 @@ const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors }) => {
       <div>
         <b>{s.name}</b>
         <br />
-        {s.instrumentType} [{s.unit}]{showDepth ? '<br/>Depth: ' + s.depth : ''}
+        {s.instrumentType} [{s.unit}]
+        {showDepth && (
+          <>
+            <br />
+            <span>Depth: {s.depth}</span>
+          </>
+        )}
         <br />
         <br />
         <table>
@@ -55,7 +61,11 @@ const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors }) => {
   }
 
   useEffect(() => {
-    const mcg = L.markerClusterGroup({ spiderfyOnMaxZoom: true, zoomToBoundsOnClick: false, showCoverageOnHover: false });
+    const mcg = L.markerClusterGroup({
+      spiderfyOnMaxZoom: true,
+      zoomToBoundsOnClick: false,
+      showCoverageOnHover: false,
+    });
     setMarkerGroup(mcg);
   }, []);
 

@@ -8,10 +8,11 @@ import { mockLayers } from 'data/mockLayers';
 import EsriTiledMapLayer from 'components/EsriTiledMapLayer';
 import EsriDynamicLayer from 'components/EsriDynamicLayer';
 // import LegendControl from 'components/LegendControl';
-import extractSensorsFromGrafanaStream from 'utilities/grafanaDataObjects';
+import extractSensorsFromGrafanaStream from 'utilities/sensorDataObjects';
 import { sensor } from 'types/sensor';
-import { mockSensorsSmall } from 'data/mockDataSmall';
-import strutcureMocDataObjects from 'utilities/mocDataObjectsConverter';
+import { mockSensors } from 'data/mockSensors';
+import { mockWebcams } from 'data/mockWebcams';
+//import strutcureMocDataObjects from 'utilities/mocDataObjectsConverter';
 import { Map as LeafletMap, Control } from 'leaflet';
 import { envelope } from 'types/envelope';
 import { getSensorsExtent } from 'utilities/utils';
@@ -23,7 +24,6 @@ import MarkerCluster from 'components/MarkerCluster';
 import 'leaflet/dist/leaflet.css';
 import { webcam } from 'types/webcam';
 import extractWebcamsFromGrafanaStream from 'utilities/webcamsDataObjects';
-//import 'leaflet.css';
 
 const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
   const mapElement = useRef<any>();
@@ -35,36 +35,36 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
   const [layers, setLayers] = useState<mapLayer[]>([]);
 
   useEffect(() => {
-    console.log('Define projecteions and setting layers');
+    //console.log('Define projecteions and setting layers');
     proj4.defs(defineProjectionZones());
     const configLayerList = options.layers;
     setLayers(options.useMockLayers ? mockLayers : configLayerList);
-    console.log('Define projecteions and setting layers');
+    //console.log('Define projecteions and setting layers');
   }, []);
 
   useEffect(() => {
-    console.log('Got data');
-    const unConvSensors = options.useMockData ? strutcureMocDataObjects(mockSensorsSmall) : extractSensorsFromGrafanaStream(data);
-    console.log('Extracted sensors');
+    //console.log('Got data');
+    const unConvSensors = options.useMockData ? mockSensors : extractSensorsFromGrafanaStream(data);
+    //console.log('Extracted sensors');
     const mapSensors: sensor[] = unConvSensors.map(element => projectAndRemapLocObject(element) as sensor);
-    console.log('Projecteded and remapped sensors');
+    //console.log('Projecteded and remapped sensors');
     const sensorsExtent: envelope = getSensorsExtent(mapSensors);
-    console.log('Calculated sensor extent');
+    //console.log('Calculated sensor extent');
     setSensors(mapSensors);
 
     // get webcams
     if (true) {
-      const unConvWebcams = extractWebcamsFromGrafanaStream(data);
-      console.log('unConvWebcams:', unConvWebcams);
-      console.log('Extracted webcams');
+      const unConvWebcams = options.useMockData ? mockWebcams : extractWebcamsFromGrafanaStream(data);
+      //console.log('mockWebcams', mockWebcams);
+      //console.log('Extracted webcams');
       const mapWebcams: webcam[] = unConvWebcams.map(element => projectAndRemapLocObject(element) as webcam);
-      console.log('Projecteded and remapped webcams');
-      console.log('webcams:', mapWebcams);
+      //console.log('Projecteded and remapped webcams');
+      //console.log('webcams:', mapWebcams);
       setWebcams(mapWebcams);
     }
 
     //console.log("data: ", data);
-    console.log('typeSymbolColors', sensorTypeConfig);
+    //console.log('typeSymbolColors', sensorTypeConfig);
     if (mapSensors.length > 0) {
       const m = mainMap.current.leafletElement as LeafletMap;
       m.fitBounds([

@@ -12,6 +12,7 @@ const projectAndRemapLocObject = (lokObject: sensor | webcam): sensor | webcam =
   const fromCoordSys = isNtm ? `EPSG:51${zoneNumber.length < 2 ? 0 : ''}${zoneNumber}` : `EPSG:258${zoneNumber}`;
 
   const coord = proj4(fromCoordSys, 'EPSG:4326', [Math.min(east, north), Math.max(east, north)]);
+  //console.log('coord', [Math.min(east, north), Math.max(east, north)], fromCoordSys);
 
   lokObject.coord = [coord[1], coord[0]];
   lokObject.coordSystem = 'wgs84';

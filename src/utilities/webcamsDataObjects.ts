@@ -16,7 +16,7 @@ function getFieldIndex(fieldName: string, fieldsArray: any) {
 }
 
 const extractWebcamsFromGrafanaStream = (data: any): webcam[] => {
-  console.log('dataobject:', data);
+  //console.log('dataobject:', data);
   const ws = data.series[2];
   // Require a query B with two field instrument_id and last_value
   const len = ws.fields[0].values.buffer.length;
@@ -29,8 +29,8 @@ const extractWebcamsFromGrafanaStream = (data: any): webcam[] => {
     colonPos[element] = getFieldIndex(element, ws.fields);
   });
 
-  console.log('positions', colonPos);
-  console.log("colonPos['name']", colonPos['name']);
+  //console.log('positions', colonPos);
+  //console.log("colonPos['name']", colonPos['name']);
 
   for (let i = 0; i < len; i++) {
     if (ws.fields[1].values.buffer[i] === 0 || ws.fields[2].values.buffer[i] === 0) {

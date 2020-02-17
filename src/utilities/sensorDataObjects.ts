@@ -33,7 +33,7 @@ function getLastValueForInstrumentID(instrumentID: string, dataArray: any, instr
 }
 
 const extractSensorsFromGrafanaStream = (data: any): sensor[] => {
-  console.log('dataobject:', data);
+  //console.log('dataobject:', data);
   const s = data.series[0];
   // Require a query B with two field instrument_id and last_value
   const lastValues = data.series[1];
@@ -60,8 +60,8 @@ const extractSensorsFromGrafanaStream = (data: any): sensor[] => {
     colonPos[element] = getFieldIndex(element, s.fields);
   });
 
-  console.log('positions', colonPos);
-  console.log("colonPos['instrument_name']", colonPos['instrument_name']);
+  //console.log('positions', colonPos);
+  //console.log("colonPos['instrument_name']", colonPos['instrument_name']);
 
   // field indexes for query B with last_value for instrument
   const instrumentIdFieldIndexQRYB = getFieldIndex('instrument_id', lastValues.fields);

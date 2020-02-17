@@ -88,7 +88,7 @@ const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors }) => {
 
         (leaflet.map as Map).addLayer(markerGroup);
 
-        console.log('Markergroup added: ', markerGroup);
+        //console.log('Markergroup added: ', markerGroup);
       }
     }
   }, [sensors, markerGroup]);

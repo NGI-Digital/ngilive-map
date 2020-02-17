@@ -12,6 +12,7 @@ const MapEditorFunction: React.FC<PanelEditorProps<MapEditorFunctionProps>> = ({
   }, [layers]);
 
   const addRow = () => {
+    console.log('options', options);
     setLayers([...layers, { name: '', serviceUrl: '', type: '', isVisible: false, isBaseMap: false, opacity: 0, WMSLayers: '', tileSize: 1024 }]);
   };
 
@@ -45,6 +46,13 @@ const MapEditorFunction: React.FC<PanelEditorProps<MapEditorFunctionProps>> = ({
                 label="Use mock layers"
                 checked={options.useMockLayers}
                 onChange={(event: any) => onOptionsChange({ ...options, useMockLayers: event.target.checked })}
+              />
+            </PanelOptionsGroup>
+            <PanelOptionsGroup title="Webcam enable">
+              <Switch
+                label="Enable webcam layer"
+                checked={options.enableWebCams}
+                onChange={(event: any) => onOptionsChange({ ...options, enableWebCams: event.target.checked })}
               />
             </PanelOptionsGroup>
           </PanelOptionsGrid>

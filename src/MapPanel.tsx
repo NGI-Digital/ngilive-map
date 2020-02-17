@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { Map, TileLayer, Popup, CircleMarker, LayersControl, WMSTileLayer } from 'react-leaflet';
+import { Map, TileLayer, Popup, Marker, LayersControl, WMSTileLayer } from 'react-leaflet';
 import proj4 from 'proj4';
 import projectAndRemapLocObject from 'utilities/locObjectProjecteorAndMapper';
 import defineProjectionZones from 'utilities/defineProjectionZones';
@@ -24,6 +24,7 @@ import MarkerCluster from 'components/MarkerCluster';
 import 'leaflet/dist/leaflet.css';
 import { webcam } from 'types/webcam';
 import extractWebcamsFromGrafanaStream from 'utilities/webcamsDataObjects';
+import { iconCamera } from 'utilities/defineIcons';
 
 const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
   const mapElement = useRef<any>();
@@ -53,7 +54,7 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
     setSensors(mapSensors);
 
     // get webcams
-    if (true) {
+    if (options.enableWebCams) {
       const unConvWebcams = options.useMockData ? mockWebcams : extractWebcamsFromGrafanaStream(data);
       //console.log('mockWebcams', mockWebcams);
       //console.log('Extracted webcams');
@@ -137,13 +138,20 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
       <MarkerCluster sensors={sensors}></MarkerCluster>
       {webcams.map(c => {
         return (
-          <CircleMarker color="#00ff00" radius={6} center={c.coord as [number, number]}>
+          <Marker icon={iconCamera} position={c.coord as [number, number]}>
             <Popup>
               <a href={c.webcamurl} target="_blank">
                 <img src={c.webcamurl} width={200} />
               </a>
             </Popup>
-          </CircleMarker>
+          </Marker>
+          // <Marker  color="#00ff00" radius={6} center={c.coord as [number, number]}>
+          //   <Popup>
+          //     <a href={c.webcamurl} target="_blank">
+          //       <img src={c.webcamurl} width={200} />
+          //     </a>
+          //   </Popup>
+          // </Marker >
         );
       })}
     </Map>

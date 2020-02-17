@@ -7,12 +7,14 @@ export type MapEditorFunctionProps = {
   layers: mapLayer[];
   useMockData: boolean;
   useMockLayers: boolean;
+  enableWebCams: boolean;
 };
 
 export const defaults: MapEditorFunctionProps = {
   layers: [],
   useMockData: true,
   useMockLayers: true,
+  enableWebCams: false,
 };
 
 export class MapEditor extends PureComponent<PanelEditorProps<MapEditorFunctionProps>> {

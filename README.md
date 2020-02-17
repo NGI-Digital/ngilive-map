@@ -39,7 +39,7 @@ docker run -d --name=grafanabeta66 -e "GF_PATHS_PLUGINS=/opt/grafana-plugins" -v
 
 ## Working queries
 Query A
-SELECT  i.instrument_name, i.instrument_id, c.xpos, c.ypos, c.coordinate_system, s.sample_type as unit, max(s.CORR_VALUE) as max, min(s.CORR_VALUE) as min, round(avg(s.CORR_VALUE),2) as avg, i.type as instrument_type, i.area from instrument i
+SELECT  i.instrument_name, i.instrument_id, c.xpos, c.ypos, c.depth, c.coordinate_system, s.sample_type as unit, max(s.CORR_VALUE) as max, min(s.CORR_VALUE) as min, round(avg(s.CORR_VALUE),2) as avg, i.type as instrument_type, i.area from instrument i
 inner join COORDINATES c on c.COORDINATE_ID = i.COORDINATE_ID
 inner join sample s on s.INSTRUMENT_ID = i.INSTRUMENT_ID
 where  (s.sample_type = $sampleType) AND
@@ -49,9 +49,12 @@ where  (s.sample_type = $sampleType) AND
   (s.instrument_id = $instrument) AND
   ($instrumentGroup = '__ALL__' OR i.instrument_name LIKE $instrumentGroup+'%') AND
   $__timeFilter(sample_date)
-group by i.instrument_id , i.instrument_name, c.xpos, c.ypos, c.coordinate_system, s.sample_type, i.type, i.area
+group by i.instrument_id , i.instrument_name, c.xpos, c.ypos,c.depth, c.coordinate_system, s.sample_type, i.type, i.area
 
 Query B
 (select s.instrument_id, s.corr_value as last_value,s.SAMPLE_DATE from sample s
      where s.SAMPLE_DATE=(select max(ss.SAMPLE_DATE) from sample ss where ss.INSTRUMENT_ID = s.INSTRUMENT_ID and $__timeFilter(ss.sample_date)))
+
+Query C (For webcams)
+select name, east, north, coordinate_system, webcamurl, metainfourl from webcams
 ```

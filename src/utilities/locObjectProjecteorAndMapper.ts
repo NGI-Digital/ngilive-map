@@ -11,11 +11,15 @@ const projectAndRemapLocObject = (lokObject: sensor | webcam): sensor | webcam =
   const zoneNumber = coordSystem.substring(3);
   const fromCoordSys = isNtm ? `EPSG:51${zoneNumber.length < 2 ? 0 : ''}${zoneNumber}` : `EPSG:258${zoneNumber}`;
 
-  const coord = proj4(fromCoordSys, 'EPSG:4326', [Math.min(east, north), Math.max(east, north)]);
+  //const coord = proj4(fromCoordSys, 'EPSG:3857', [Math.min(east, north), Math.max(east, north)]);
   //console.log('coord', [Math.min(east, north), Math.max(east, north)], fromCoordSys);
 
+  // leaflet operates witn (north,east)
+  const coord = proj4(fromCoordSys, 'EPSG:4326', [Math.min(east, north), Math.max(east, north)]);
+
   lokObject.coord = [coord[1], coord[0]];
-  lokObject.coordSystem = 'wgs84';
+  //console.log('lokObject', lokObject);
+  //lokObject.coordSystem = 'wgs84';
   return lokObject;
 };
 

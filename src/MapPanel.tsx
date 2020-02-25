@@ -46,11 +46,12 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
   useEffect(() => {
     //console.log('Got data');
     const unConvSensors = options.useMockData ? mockSensors : extractSensorsFromGrafanaStream(data);
+    //console.log('unProjecteded', unConvSensors);
     //console.log('Extracted sensors');
     const mapSensors: sensor[] = unConvSensors.map(element => projectAndRemapLocObject(element) as sensor);
-    //console.log('Projecteded and remapped sensors');
+    //console.log('Projecteded and remapped sensors', mapSensors);
     const sensorsExtent: envelope = getSensorsExtent(mapSensors);
-    //console.log('Calculated sensor extent');
+    //console.log('Calculated sensor extent', sensorsExtent);
     setSensors(mapSensors);
 
     // get webcams
@@ -109,7 +110,9 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
   }
 
   function LayersElements(props: any) {
+    console.log('props:', props);
     const layerElements = props.layers.map((layer: any) => {
+      console.log('layer', layer);
       if (layer.isBaseMap) {
         return (
           <LayersControl.BaseLayer name={layer.name} checked={layer.isVisible}>
@@ -145,13 +148,6 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
               </a>
             </Popup>
           </Marker>
-          // <Marker  color="#00ff00" radius={6} center={c.coord as [number, number]}>
-          //   <Popup>
-          //     <a href={c.webcamurl} target="_blank">
-          //       <img src={c.webcamurl} width={200} />
-          //     </a>
-          //   </Popup>
-          // </Marker >
         );
       })}
     </Map>

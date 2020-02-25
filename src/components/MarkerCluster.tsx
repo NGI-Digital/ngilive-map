@@ -11,6 +11,7 @@ import '../MarkerCluster.css';
 import '../MarkerCluster.Default.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
+//import LineDemo from './LineDemo';
 
 type MarkerClusterType = {
   sensors: sensor[];
@@ -20,7 +21,17 @@ const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors }) => {
   const leaflet = useLeaflet();
   const [markerGroup, setMarkerGroup] = useState();
 
+  const styles = {
+    fontFamily: 'sans-serif',
+    textAlign: 'center',
+  };
+
   function createMarkerPopup(s: sensor, showDepth: boolean) {
+    // const jsx = (
+    //   <div>
+    //     <LineDemo/>
+    //   </div>
+    // );
     const jsx = (
       <div>
         <b>{s.name}</b>
@@ -62,9 +73,9 @@ const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors }) => {
 
   useEffect(() => {
     const mcg = L.markerClusterGroup({
-      spiderfyOnMaxZoom: true,
       zoomToBoundsOnClick: false,
       showCoverageOnHover: false,
+      spiderfyOnMaxZoom: true,
     });
     setMarkerGroup(mcg);
   }, []);

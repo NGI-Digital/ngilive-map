@@ -1,6 +1,6 @@
 import { sensorTimeSerial } from '../types/sensorTimeSierial';
 
-const getTimeSerial = (data: any, sensorName: string): sensorTimeSerial => {
+const getTimeSerialFromGrafanaStream = (data: any, sensorName: string): sensorTimeSerial => {
   const returnData: sensorTimeSerial = {
     values: [],
     timestamps: [],
@@ -14,36 +14,6 @@ const getTimeSerial = (data: any, sensorName: string): sensorTimeSerial => {
         const timestamps = serial.fields[1].values.buffer;
         returnData.values = vals;
         returnData.timestamps = timestamps;
-
-        // var new_array: string[] = dates.map(function(element: number) {
-        //   console.log('element:', element);
-        //   var date = new Date(element);
-        //   const dateStr =
-        //     date.getFullYear() +
-        //     '.' +
-        //     date.getMonth() +
-        //     '.' +
-        //     date.getDate() +
-        //     '-' +
-        //     date.getFullYear() +
-        //     '.' +
-        //     date.getHours() +
-        //     '.' +
-        //     date.getMinutes();
-        //   //     date.getFullYear(),
-        //   //     date.getMonth()+1,
-        //   //     date.getDate(),
-        //   //     date.getHours(),
-        //   //     date.getMinutes(),
-        //   //     date.getSeconds(),
-        //   //  ];
-
-        //   console.log('temp:', dateStr);
-        //   //element[2] = temp.toISOString();
-        //   return dateStr;
-        // });
-        // returnData.dates = new_array;
-        //console.log('Instrumentnavn:', serial.name, 'Dataserie', serial);
       }
     }
   }
@@ -51,4 +21,4 @@ const getTimeSerial = (data: any, sensorName: string): sensorTimeSerial => {
   return returnData;
 };
 
-export default getTimeSerial;
+export default getTimeSerialFromGrafanaStream;

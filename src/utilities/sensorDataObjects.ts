@@ -1,4 +1,5 @@
 import { sensor } from 'types/sensor';
+import getTimeSerial from './sensorTimeSeries';
 //import { FilterFieldsByNameTransformerOptions } from '@grafana/data';
 
 export interface FieldsPosHash {
@@ -71,6 +72,7 @@ const extractSensorsFromGrafanaStream = (data: any): sensor[] => {
     if (s.fields[1].values.buffer[i] === 0 || s.fields[2].values.buffer[i] === 0) {
       continue;
     }
+
     const us: sensor = {
       name: s.fields[colonPos['instrument_name']].values.buffer[i],
       id: s.fields[colonPos['instrument_id']].values.buffer[i],
@@ -82,6 +84,7 @@ const extractSensorsFromGrafanaStream = (data: any): sensor[] => {
       max: s.fields[colonPos['max']].values.buffer[i],
       mean: s.fields[colonPos['avg']].values.buffer[i],
       instrumentType: s.fields[colonPos['instrument_type']].values.buffer[i],
+      timeSerial: getTimeSerial(data, s.fields[colonPos['instrument_name']].values.buffer[i]),
     };
     const lastValue: number = getLastValueForInstrumentID(
       s.fields[colonPos['instrument_id']].values.buffer[i],

@@ -2,11 +2,20 @@ import { sensorConfig } from 'types/sensorConfig';
 
 export const sensorTypeConfig: sensorConfig[] = [
   {
+    type: 'Inklinasjon',
+    markerType: 'CircleMarker',
+    color: '#A9A9A9',
+    size: 5,
+    showDepth: false,
+    showPlot: true,
+  },
+  {
     type: 'Grunnvann',
     markerType: 'CircleMarker',
     color: '#114f8a',
     size: 5,
     showDepth: false,
+    showPlot: true,
   },
   {
     type: 'Lufttemp',
@@ -14,6 +23,7 @@ export const sensorTypeConfig: sensorConfig[] = [
     color: '#5496ab',
     size: 5,
     showDepth: false,
+    showPlot: true,
   },
   {
     type: 'Lufttrykk',
@@ -21,6 +31,7 @@ export const sensorTypeConfig: sensorConfig[] = [
     color: '#733275',
     size: 5,
     showDepth: false,
+    showPlot: true,
   },
   {
     type: 'Miljø',
@@ -28,6 +39,7 @@ export const sensorTypeConfig: sensorConfig[] = [
     color: '#0ff000',
     size: 5,
     showDepth: false,
+    showPlot: true,
   },
   {
     type: 'Nedbør',
@@ -35,6 +47,7 @@ export const sensorTypeConfig: sensorConfig[] = [
     color: '#1546cf',
     size: 5,
     showDepth: false,
+    showPlot: true,
   },
   {
     type: 'Pakkertrykk',
@@ -42,6 +55,7 @@ export const sensorTypeConfig: sensorConfig[] = [
     color: '#adc71a',
     size: 5,
     showDepth: false,
+    showPlot: true,
   },
   {
     type: 'Poretrykk',
@@ -49,6 +63,7 @@ export const sensorTypeConfig: sensorConfig[] = [
     color: '#f7550a',
     size: 5,
     showDepth: true,
+    showPlot: true,
   },
   {
     type: 'Vannstand',
@@ -56,6 +71,7 @@ export const sensorTypeConfig: sensorConfig[] = [
     color: '#4e00f7',
     size: 5,
     showDepth: false,
+    showPlot: true,
   },
   {
     type: 'Vannstrøm',
@@ -63,6 +79,7 @@ export const sensorTypeConfig: sensorConfig[] = [
     color: '#03cafc',
     size: 5,
     showDepth: false,
+    showPlot: true,
   },
   {
     type: 'zBat12V',
@@ -70,6 +87,7 @@ export const sensorTypeConfig: sensorConfig[] = [
     color: '#666666',
     size: 5,
     showDepth: false,
+    showPlot: false,
   },
   {
     type: 'zBat15V',
@@ -77,6 +95,7 @@ export const sensorTypeConfig: sensorConfig[] = [
     color: '#666666',
     size: 5,
     showDepth: false,
+    showPlot: false,
   },
   {
     type: 'zBat18V',
@@ -84,6 +103,7 @@ export const sensorTypeConfig: sensorConfig[] = [
     color: '#666666',
     size: 5,
     showDepth: false,
+    showPlot: false,
   },
   {
     type: 'zBat24V',
@@ -91,6 +111,7 @@ export const sensorTypeConfig: sensorConfig[] = [
     color: '#666666',
     size: 5,
     showDepth: false,
+    showPlot: false,
   },
   {
     type: 'zBat3V',
@@ -98,6 +119,7 @@ export const sensorTypeConfig: sensorConfig[] = [
     color: '#666666',
     size: 5,
     showDepth: false,
+    showPlot: false,
   },
   {
     type: 'default',
@@ -105,5 +127,6 @@ export const sensorTypeConfig: sensorConfig[] = [
     color: '#f7b100',
     size: 5,
     showDepth: false,
+    showPlot: false,
   },
 ];

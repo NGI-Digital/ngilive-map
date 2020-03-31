@@ -1,6 +1,6 @@
 import { sensor } from '../types/sensor';
 import { envelope } from '../types/envelope';
-import proj4 from 'proj4';
+//import proj4 from 'proj4';
 
 const getSensorsExtent = (sensorArray: sensor[]): envelope => {
   const tmpMapEx: envelope = {

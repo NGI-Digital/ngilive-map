@@ -11,7 +11,11 @@ import '../MarkerCluster.css';
 import '../MarkerCluster.Default.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
-//import LineDemo from './LineDemo';
+import { Line } from 'react-chartjs-2';
+//import merge from 'lodash.chunk';
+import { getColorFromHexRgbOrName } from '@grafana/data';
+//import {draw, generate} from 'patternomaly'
+//import { sensorTimeSerial } from 'types/sensorTimeSierial';
 
 type MarkerClusterType = {
   sensors: sensor[];
@@ -21,19 +25,70 @@ const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors }) => {
   const leaflet = useLeaflet();
   const [markerGroup, setMarkerGroup] = useState();
 
-  const styles = {
-    fontFamily: 'sans-serif',
-    textAlign: 'center',
+  const grafPopupStyle = {
+    width: '500px',
+    height: '300px',
   };
 
-  function createMarkerPopup(s: sensor, showDepth: boolean) {
-    // const jsx = (
-    //   <div>
-    //     <LineDemo/>
-    //   </div>
-    // );
+  const grafStye = {
+    width: '300px',
+    height: '200px',
+  };
+
+  function createMarkerPopup(s: sensor, showDepth: boolean, sensorSetting: sensorConfig) {
+    var data2 = {
+      labels: [] as number[],
+      datasets: [
+        {
+          label: '',
+          data: [] as number[],
+          backgroundColor: getColorFromHexRgbOrName('blue'),
+          fill: false,
+          pointBackgroundColor: getColorFromHexRgbOrName(sensorSetting.color),
+          pointBorderColor: getColorFromHexRgbOrName(sensorSetting.color),
+          pointRadius: 2,
+        },
+      ],
+    };
+
+    var options = {
+      title: {
+        display: false,
+        text: 'Custom Chart Title',
+        fontColor: getColorFromHexRgbOrName('pink'),
+      },
+      canvas: {
+        width: 100,
+        height: 75,
+      },
+      legend: {
+        display: false,
+      },
+      scales: {
+        xAxes: [
+          {
+            type: 'time',
+            distribution: 'linear',
+            time: {
+              tooltipFormat: 'YYYY-MM-DD HH:mm',
+              displayFormats: {
+                day: 'YYYY-D/MM',
+                second: 'HH:mm:ss',
+                minute: 'HH:mm',
+                hour: 'D/MM HH',
+              },
+            },
+          },
+        ],
+      },
+    };
+
+    data2.labels = s.timeSerial === null || s.timeSerial === undefined ? ([] as number[]) : (s.timeSerial.timestamps as number[]);
+    data2.datasets[0].data = s.timeSerial === null || s.timeSerial == undefined ? ([] as number[]) : s.timeSerial.values;
+    data2.datasets[0].label = s.timeSerial === null || s.timeSerial == undefined ? '' : s.instrumentType + '[' + s.unit + ']';
+
     const jsx = (
-      <div>
+      <div style={grafPopupStyle}>
         <b>{s.name}</b>
         <br />
         {s.instrumentType} [{s.unit}]
@@ -49,6 +104,11 @@ const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors }) => {
           <tr>
             <td>Last value:</td>
             <td>{s.lastValue}</td>
+            {/* <td rowSpan={4}>
+              <div style={grafStye}>
+                <Line data={data2} options={options}></Line>
+              </div>
+            </td> */}
           </tr>
           <tr>
             <td>Max:</td>
@@ -63,6 +123,12 @@ const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors }) => {
             <td>{s.mean}</td>
           </tr>
         </table>
+        <br />
+        {sensorSetting.showPlot && (
+          <div style={grafStye}>
+            <Line data={data2} options={options}></Line>
+          </div>
+        )}
       </div>
     );
 
@@ -90,7 +156,7 @@ const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors }) => {
             settings = sensorTypeConfig.find(t => t.type === 'default') as sensorConfig;
           }
 
-          const popupStr = createMarkerPopup(c, settings.showDepth);
+          const popupStr = createMarkerPopup(c, settings.showDepth, settings);
           const marker = L.circleMarker(c.coord as [number, number], { color: settings.color, radius: settings.size });
           marker.bindPopup(popupStr);
           //marker.bindTooltip(popupStr);

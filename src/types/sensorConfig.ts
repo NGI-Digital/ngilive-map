@@ -5,4 +5,5 @@ export type sensorConfig = {
   color: string;
   size: number;
   showDepth: boolean;
+  showPlot: boolean;
 };

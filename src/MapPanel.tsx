@@ -45,6 +45,7 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
 
   useEffect(() => {
     //console.log('Got data');
+    console.log('Got data', data);
     const unConvSensors = options.useMockData ? mockSensors : extractSensorsFromGrafanaStream(data);
     //console.log('unProjecteded', unConvSensors);
     //console.log('Extracted sensors');

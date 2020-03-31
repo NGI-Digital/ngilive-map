@@ -1,4 +1,6 @@
 // Defines type sensor that is used before and after projetion
+import { sensorTimeSerial } from './sensorTimeSierial';
+
 export type sensor = {
   name: string;
   id: number;
@@ -11,4 +13,5 @@ export type sensor = {
   max?: number;
   mean?: number;
   lastValue?: number;
+  timeSerial?: sensorTimeSerial;
 };

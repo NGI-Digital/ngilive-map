@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useMemo, memo } from 'react';
 import { Map, TileLayer, Popup, Marker, LayersControl, WMSTileLayer } from 'react-leaflet';
 import proj4 from 'proj4';
 import projectAndRemapLocObject from 'utilities/locObjectProjecteorAndMapper';
@@ -30,44 +30,47 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
   const mapElement = useRef<any>();
   const mainMap = useRef<any>();
   const position: [number, number] = [60, 10.5];
+  // var layersLoaded = false;
+  // var layersElementsConst: [any];
 
   const [webcams, setWebcams] = useState<webcam[]>([]);
   const [sensors, setSensors] = useState<sensor[]>([]);
   const [layers, setLayers] = useState<mapLayer[]>([]);
 
   useEffect(() => {
-    //console.log('Define projecteions and setting layers');
+    console.log('Define projections and setting layers');
     proj4.defs(defineProjectionZones());
     const configLayerList = options.layers;
+    //const cfgLayerList = Object.assign({}, true, configLayerList);
+
+    console.log('layers:', configLayerList);
     setLayers(options.useMockLayers ? mockLayers : configLayerList);
+    console.log('layers:', layers);
     //console.log('Define projecteions and setting layers');
+
+    console.log('START');
   }, []);
 
   useEffect(() => {
+    console.log('New layers');
+  }, [layers]);
+
+  useEffect(() => {
     //console.log('Got data');
-    console.log('Got data', data);
+
+    //console.log('layers:', layers);
     const unConvSensors = options.useMockData ? mockSensors : extractSensorsFromGrafanaStream(data);
-    //console.log('unProjecteded', unConvSensors);
-    //console.log('Extracted sensors');
     const mapSensors: sensor[] = unConvSensors.map(element => projectAndRemapLocObject(element) as sensor);
-    //console.log('Projecteded and remapped sensors', mapSensors);
     const sensorsExtent: envelope = getSensorsExtent(mapSensors);
-    //console.log('Calculated sensor extent', sensorsExtent);
     setSensors(mapSensors);
 
     // get webcams
     if (options.enableWebCams) {
       const unConvWebcams = options.useMockData ? mockWebcams : extractWebcamsFromGrafanaStream(data);
-      //console.log('mockWebcams', mockWebcams);
-      //console.log('Extracted webcams');
       const mapWebcams: webcam[] = unConvWebcams.map(element => projectAndRemapLocObject(element) as webcam);
-      //console.log('Projecteded and remapped webcams');
-      //console.log('webcams:', mapWebcams);
       setWebcams(mapWebcams);
     }
 
-    //console.log("data: ", data);
-    //console.log('typeSymbolColors', sensorTypeConfig);
     if (mapSensors.length > 0) {
       const m = mainMap.current.leafletElement as LeafletMap;
       m.fitBounds([
@@ -110,10 +113,38 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
     }
   }
 
-  function LayersElements(props: any) {
-    console.log('props:', props);
-    const layerElements = props.layers.map((layer: any) => {
-      console.log('layer', layer);
+  // function LayersElements(props: any) {
+  //   console.log('LayersElement');
+  //   const layerElements = props.layers.map((layer: any) => {
+  //     //console.log('layer', layer);
+  //     if (layer.isBaseMap) {
+  //       return (
+  //         <LayersControl.BaseLayer name={layer.name} checked={layer.isVisible}>
+  //           {layersElement(layer)}
+  //         </LayersControl.BaseLayer>
+  //       );
+  //     } else {
+  //       return (
+  //         <LayersControl.Overlay name={layer.name} checked={layer.isVisible}>
+  //           {layersElement(layer)}
+  //         </LayersControl.Overlay>
+  //       );
+  //     }
+  //   });
+  //   return (
+  //     <LayersControl ref={mapElement} position="bottomright">
+  //       {layerElements}
+  //     </LayersControl>
+  //   );
+  // }
+
+  const LayersElements = memo((props: any) => {
+    // if (!layersLoaded) {
+    //console.log('LayersElement,layers', layers);
+    console.log('LayersElement', props);
+    // layersLoaded = true;
+    const layerElements = props.layers.map((layer: mapLayer) => {
+      //console.log('layer', layer);
       if (layer.isBaseMap) {
         return (
           <LayersControl.BaseLayer name={layer.name} checked={layer.isVisible}>
@@ -128,12 +159,22 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
         );
       }
     });
+    // layersElementsConst = layerElements;
+    console.log('Not inne i else');
     return (
       <LayersControl ref={mapElement} position="bottomright">
         {layerElements}
       </LayersControl>
     );
-  }
+    // } else {
+    //   console.log('inne i else');
+    //   return (
+    //     <LayersControl ref={mapElement} position="bottomright">
+    //       {layersElementsConst}
+    //     </LayersControl>
+    //   );
+    // }
+  });
 
   return (
     <Map ref={mainMap} center={position} zoom={8} maxZoom={18} style={{ height: height, width: width }}>

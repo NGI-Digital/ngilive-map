@@ -137,6 +137,13 @@ const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors }) => {
     return div;
   }
 
+  function createEmptyPopup() {
+    const div = L.DomUtil.create('div', '');
+    const jsx = <div></div>;
+    ReactDOM.render(jsx, div);
+    return div;
+  }
+
   useEffect(() => {
     const mcg = L.markerClusterGroup({
       zoomToBoundsOnClick: false,
@@ -156,10 +163,20 @@ const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors }) => {
             settings = sensorTypeConfig.find(t => t.type === 'default') as sensorConfig;
           }
 
-          const popupStr = createMarkerPopup(c, settings.showDepth, settings);
+          //const popupStr = createMarkerPopup(c, settings.showDepth, settings);
           const marker = L.circleMarker(c.coord as [number, number], { color: settings.color, radius: settings.size });
-          marker.bindPopup(popupStr);
-          //marker.bindTooltip(popupStr);
+
+          marker
+            .bindPopup(() => {
+              console.log('marker', marker);
+              return createMarkerPopup(c, true, settings as sensorConfig);
+              //return 'HEI';
+            })
+            .on('popupclose', () => {
+              console.log('on close');
+              marker.setPopupContent(createEmptyPopup());
+            });
+
           markerGroup.addLayer(marker);
         });
 

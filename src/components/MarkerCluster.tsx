@@ -23,7 +23,7 @@ type MarkerClusterType = {
 
 const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors }) => {
   const leaflet = useLeaflet();
-  const [markerGroup, setMarkerGroup] = useState();
+  const [markerGroup, setMarkerGroup] = useState<any>();
 
   const grafPopupStyle = {
     width: '500px',
@@ -84,8 +84,8 @@ const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors }) => {
     };
 
     data2.labels = s.timeSerial === null || s.timeSerial === undefined ? ([] as number[]) : (s.timeSerial.timestamps as number[]);
-    data2.datasets[0].data = s.timeSerial === null || s.timeSerial == undefined ? ([] as number[]) : s.timeSerial.values;
-    data2.datasets[0].label = s.timeSerial === null || s.timeSerial == undefined ? '' : s.instrumentType + '[' + s.unit + ']';
+    data2.datasets[0].data = s.timeSerial === null || s.timeSerial === undefined ? ([] as number[]) : s.timeSerial.values;
+    data2.datasets[0].label = s.timeSerial === null || s.timeSerial === undefined ? '' : s.instrumentType + '[' + s.unit + ']';
 
     const jsx = (
       <div style={grafPopupStyle}>

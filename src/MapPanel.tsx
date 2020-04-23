@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, useMemo, memo } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { Map, TileLayer, Popup, Marker, LayersControl, WMSTileLayer } from 'react-leaflet';
 import proj4 from 'proj4';
 import projectAndRemapLocObject from 'utilities/locObjectProjecteorAndMapper';
@@ -13,7 +13,7 @@ import { sensor } from 'types/sensor';
 import { mockSensors } from 'data/mockSensors';
 import { mockWebcams } from 'data/mockWebcams';
 //import strutcureMocDataObjects from 'utilities/mocDataObjectsConverter';
-import { Map as LeafletMap, Control } from 'leaflet';
+import { Map as LeafletMap } from 'leaflet';
 import { envelope } from 'types/envelope';
 import { getSensorsExtent } from 'utilities/utils';
 import { sensorTypeConfig } from 'data/defualtSensorConfig';
@@ -30,35 +30,18 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
   const mapElement = useRef<any>();
   const mainMap = useRef<any>();
   const position: [number, number] = [60, 10.5];
-  // var layersLoaded = false;
-  // var layersElementsConst: [any];
 
   const [webcams, setWebcams] = useState<webcam[]>([]);
   const [sensors, setSensors] = useState<sensor[]>([]);
   const [layers, setLayers] = useState<mapLayer[]>([]);
 
   useEffect(() => {
-    console.log('Define projections and setting layers');
     proj4.defs(defineProjectionZones());
     const configLayerList = options.layers;
-    //const cfgLayerList = Object.assign({}, true, configLayerList);
-
-    console.log('layers:', configLayerList);
     setLayers(options.useMockLayers ? mockLayers : configLayerList);
-    console.log('layers:', layers);
-    //console.log('Define projecteions and setting layers');
-
-    console.log('START');
   }, []);
 
   useEffect(() => {
-    console.log('New layers');
-  }, [layers]);
-
-  useEffect(() => {
-    //console.log('Got data');
-
-    //console.log('layers:', layers);
     const unConvSensors = options.useMockData ? mockSensors : extractSensorsFromGrafanaStream(data);
     const mapSensors: sensor[] = unConvSensors.map(element => projectAndRemapLocObject(element) as sensor);
     const sensorsExtent: envelope = getSensorsExtent(mapSensors);
@@ -80,105 +63,50 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
     }
   }, [data]);
 
-  function layersElement(layer: any) {
-    switch (layer.type) {
-      case 'WMSLayer':
-        return (
-          <WMSTileLayer
-            url={layer.serviceUrl}
-            layers={layer.WMSLayers}
-            transparent={true}
-            format={'image/png'}
-            tileSize={layer.tileSize != null ? layer.tileSize : 1024}
-          />
-        );
-      case 'WMStiledLayer':
-        return (
-          <WMSTileLayer
-            url={layer.serviceUrl}
-            layers={layer.WMSLayers}
-            transparent={true}
-            format={'image/png'}
-            tileSize={layer.tileSize != null ? layer.tileSize : 1024}
-          />
-        );
-      case 'tiledLayer':
-        return <TileLayer url={layer.serviceUrl} />;
-      case 'esriTiledMapLayer':
-        return <EsriTiledMapLayer url={layer.serviceUrl} />;
-      case 'esriDynamicMapLayer':
-        return <EsriDynamicLayer url={layer.serviceUrl} />;
-      default:
-        return null;
-    }
-  }
-
-  // function LayersElements(props: any) {
-  //   console.log('LayersElement');
-  //   const layerElements = props.layers.map((layer: any) => {
-  //     //console.log('layer', layer);
-  //     if (layer.isBaseMap) {
-  //       return (
-  //         <LayersControl.BaseLayer name={layer.name} checked={layer.isVisible}>
-  //           {layersElement(layer)}
-  //         </LayersControl.BaseLayer>
-  //       );
-  //     } else {
-  //       return (
-  //         <LayersControl.Overlay name={layer.name} checked={layer.isVisible}>
-  //           {layersElement(layer)}
-  //         </LayersControl.Overlay>
-  //       );
-  //     }
-  //   });
-  //   return (
-  //     <LayersControl ref={mapElement} position="bottomright">
-  //       {layerElements}
-  //     </LayersControl>
-  //   );
-  // }
-
-  const LayersElements = memo((props: any) => {
-    // if (!layersLoaded) {
-    //console.log('LayersElement,layers', layers);
-    console.log('LayersElement', props);
-    // layersLoaded = true;
-    const layerElements = props.layers.map((layer: mapLayer) => {
-      //console.log('layer', layer);
-      if (layer.isBaseMap) {
-        return (
-          <LayersControl.BaseLayer name={layer.name} checked={layer.isVisible}>
-            {layersElement(layer)}
-          </LayersControl.BaseLayer>
-        );
-      } else {
-        return (
-          <LayersControl.Overlay name={layer.name} checked={layer.isVisible}>
-            {layersElement(layer)}
-          </LayersControl.Overlay>
-        );
-      }
-    });
-    // layersElementsConst = layerElements;
-    console.log('Not inne i else');
-    return (
-      <LayersControl ref={mapElement} position="bottomright">
-        {layerElements}
-      </LayersControl>
-    );
-    // } else {
-    //   console.log('inne i else');
-    //   return (
-    //     <LayersControl ref={mapElement} position="bottomright">
-    //       {layersElementsConst}
-    //     </LayersControl>
-    //   );
-    // }
-  });
+  const layerElement = (layer: any) => (
+    <>
+      {layer.type === 'WMSLayer' && (
+        <WMSTileLayer
+          url={layer.serviceUrl}
+          layers={layer.WMSLayers}
+          transparent={true}
+          format={'image/png'}
+          tileSize={layer.tileSize != null ? layer.tileSize : 1024}
+        />
+      )}
+      {layer.type === 'WMStiledLayer' && (
+        <WMSTileLayer
+          url={layer.serviceUrl}
+          layers={layer.WMSLayers}
+          transparent={true}
+          format={'image/png'}
+          tileSize={layer.tileSize != null ? layer.tileSize : 1024}
+        />
+      )}
+      {layer.type === 'tiledLayer' && <TileLayer url={layer.serviceUrl} />}
+      {layer.type === 'esriTiledMapLayer' && <EsriTiledMapLayer url={layer.serviceUrl} />}
+      {layer.type === 'esriDynamicMapLayer' && <EsriDynamicLayer url={layer.serviceUrl} />}
+    </>
+  );
 
   return (
     <Map ref={mainMap} center={position} zoom={8} maxZoom={18} style={{ height: height, width: width }}>
-      <LayersElements layers={layers}></LayersElements>
+      <LayersControl ref={mapElement} position="bottomright">
+        {layers
+          .filter(l => l.isBaseMap)
+          .map(layer => (
+            <LayersControl.BaseLayer name={layer.name} checked={layer.isVisible}>
+              {layerElement(layer)}
+            </LayersControl.BaseLayer>
+          ))}
+        {layers
+          .filter(l => !l.isBaseMap)
+          .map(layer => (
+            <LayersControl.Overlay name={layer.name} checked={layer.isVisible}>
+              {layerElement(layer)}
+            </LayersControl.Overlay>
+          ))}
+      </LayersControl>
       <LegendControl symbols={sensorTypeConfig.filter(ts => sensors.find(s => s.instrumentType === ts.type))}></LegendControl>
       <MarkerCluster sensors={sensors}></MarkerCluster>
       {webcams.map(c => {

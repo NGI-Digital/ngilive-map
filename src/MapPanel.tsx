@@ -25,6 +25,7 @@ import 'leaflet/dist/leaflet.css';
 import { webcam } from 'types/webcam';
 import extractWebcamsFromGrafanaStream from 'utilities/webcamsDataObjects';
 import { iconCamera } from 'utilities/defineIcons';
+import { setGrafanaVariable } from 'utilities/setGrafanaVariable';
 
 const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
   const mapElement = useRef<any>();
@@ -39,6 +40,10 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
     proj4.defs(defineProjectionZones());
     const configLayerList = options.layers;
     setLayers(options.useMockLayers ? mockLayers : configLayerList);
+
+    // Example on usage of setGrafanaVariable
+    // Could be called on a click event as well 
+    // setGrafanaVariable("test", "2")
   }, []);
 
   useEffect(() => {

@@ -3,6 +3,9 @@ import { sensor } from '../types/sensor';
 import { webcam } from '../types/webcam';
 
 const projectAndRemapLocObject = (lokObject: sensor | webcam): sensor | webcam => {
+  // Clone the current object to prevent messing with Grafans data object
+  let newLokObject = { ...lokObject };
+
   const coordSystem = lokObject.coordSystem;
   const east = lokObject.coord[0];
   const north = lokObject.coord[1];
@@ -11,16 +14,11 @@ const projectAndRemapLocObject = (lokObject: sensor | webcam): sensor | webcam =
   const zoneNumber = coordSystem.substring(3);
   const fromCoordSys = isNtm ? `EPSG:51${zoneNumber.length < 2 ? 0 : ''}${zoneNumber}` : `EPSG:258${zoneNumber}`;
 
-  //const coord = proj4(fromCoordSys, 'EPSG:3857', [Math.min(east, north), Math.max(east, north)]);
-  //console.log('coord', [Math.min(east, north), Math.max(east, north)], fromCoordSys);
-
   // leaflet operates witn (north,east)
   const coord = proj4(fromCoordSys, 'EPSG:4326', [Math.min(east, north), Math.max(east, north)]);
 
-  lokObject.coord = [coord[1], coord[0]];
-  //console.log('lokObject', lokObject);
-  //lokObject.coordSystem = 'wgs84';
-  return lokObject;
+  newLokObject.coord = [coord[1], coord[0]];
+  return newLokObject;
 };
 
 export default projectAndRemapLocObject;

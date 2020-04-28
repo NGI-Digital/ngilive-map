@@ -1,9 +1,15 @@
-grafana:
-  image: grafana/grafana:latest
-  ports:
-    - '3000:3000'
-  volumes:
-    - ./:/var/lib/grafana/plugins/ngilive-map
-    # - ./provisioning:/etc/grafana/provisioning
-  environment:
-    - TERM=linux
+version: "3"
+
+services:
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "4000:3000"
+    volumes:
+      - ./:/var/lib/grafana/plugins/ngilive-map
+      - grafana-storage:/var/lib/grafana
+      # - ./provisioning:/etc/grafana/provisioning
+    environment:
+      - TERM=linux
+volumes:
+  grafana-storage:

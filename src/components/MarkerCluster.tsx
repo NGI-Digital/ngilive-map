@@ -14,8 +14,6 @@ import ReactDOM from 'react-dom';
 import { Line } from 'react-chartjs-2';
 //import merge from 'lodash.chunk';
 import { getColorFromHexRgbOrName } from '@grafana/data';
-//import {draw, generate} from 'patternomaly'
-//import { sensorTimeSerial } from 'types/sensorTimeSierial';
 
 type MarkerClusterType = {
   sensors: sensor[];
@@ -168,12 +166,12 @@ const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors }) => {
 
           marker
             .bindPopup(() => {
-              console.log('marker', marker);
+              //console.log('marker', marker);
               return createMarkerPopup(c, true, settings as sensorConfig);
               //return 'HEI';
             })
             .on('popupclose', () => {
-              console.log('on close');
+              //console.log('on close');
               marker.setPopupContent(createEmptyPopup());
             });
 

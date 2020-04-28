@@ -57,4 +57,7 @@ Query B
 
 Query C (For webcams)
 select name, east, north, coordinate_system, webcamurl, metainfourl from webcams
+
+Query D (timeseries in popup)
+select i.instrument_name,  s.corr_value , s.sample_date as time  from sample s, instrument i where s.instrument_id = i.instrument_id and $__timeFilter(sample_date)
 ```

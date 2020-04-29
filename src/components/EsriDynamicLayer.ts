@@ -12,7 +12,7 @@ const EsriDynamicLayer = (props: any) => {
       maxZoom: 20,
     });
     layer.addTo(leaflet.layerContainer as Map);
-  }, [props]);
+  }, []);
 
   return null;
 };

@@ -59,5 +59,20 @@ Query C (For webcams)
 select name, east, north, coordinate_system, webcamurl, metainfourl from webcams
 
 Query D (timeseries in popup)
-select i.instrument_name,  s.corr_value , s.sample_date as time  from sample s, instrument i where s.instrument_id = i.instrument_id and $__timeFilter(sample_date)
+select i.instrument_name,  s.corr_value , s.sample_date as time  from sample s, instrument i where s.instrument_id = i.instrument_id and $__timeFilter(sample_date) order by s.sample_date
+
+Alt Query D
+SELECT  i.instrument_name,s.corr_value, s.sample_date as time from instrument i
+inner join sample s on s.INSTRUMENT_ID = i.INSTRUMENT_ID
+where  (s.sample_type = $sampleType) AND
+  (i.copy_to_gis = 1) AND
+  (i.type = $instrumentType) AND
+  (i.area = $instrumentArea) AND
+  (s.instrument_id = $instrument) AND
+  ($instrumentGroup = '__ALL__' OR i.instrument_name LIKE $instrumentGroup+'%') AND
+  $__timeFilter(sample_date)
+group by i.instrument_name,  s.corr_value , s.sample_date
+order by s.sample_date
+
+
 ```

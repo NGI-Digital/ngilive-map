@@ -42,7 +42,7 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
     setLayers(options.useMockLayers ? mockLayers : configLayerList);
 
     // Example on usage of setGrafanaVariable
-    // Could be called on a click event as well 
+    // Could be called on a click event as well
     // setGrafanaVariable("test", "2")
   }, []);
 
@@ -113,7 +113,7 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
           ))}
       </LayersControl>
       <LegendControl symbols={sensorTypeConfig.filter(ts => sensors.find(s => s.instrumentType === ts.type))}></LegendControl>
-      <MarkerCluster sensors={sensors}></MarkerCluster>
+      <MarkerCluster sensors={sensors} data={data}></MarkerCluster>
       {webcams.map(c => {
         return (
           <Marker icon={iconCamera} position={c.coord as [number, number]}>

@@ -14,12 +14,14 @@ import ReactDOM from 'react-dom';
 import { Line } from 'react-chartjs-2';
 //import merge from 'lodash.chunk';
 import { getColorFromHexRgbOrName } from '@grafana/data';
+import getTimeSerialFromGrafanaStream from '../utilities/sensorTimeSeries';
 
 type MarkerClusterType = {
   sensors: sensor[];
+  data: any;
 };
 
-const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors }) => {
+const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors, data }) => {
   const leaflet = useLeaflet();
   const [markerGroup, setMarkerGroup] = useState<any>();
 
@@ -33,7 +35,7 @@ const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors }) => {
     height: '200px',
   };
 
-  function createMarkerPopup(s: sensor, showDepth: boolean, sensorSetting: sensorConfig) {
+  function createMarkerPopup(s: sensor, showDepth: boolean, sensorSetting: sensorConfig, data: any) {
     var data2 = {
       labels: [] as number[],
       datasets: [
@@ -80,6 +82,11 @@ const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors }) => {
         ],
       },
     };
+
+    // Adding data to marker opbjet to be able to plot it
+    if (s.timeSerial == null) {
+      s.timeSerial = getTimeSerialFromGrafanaStream(data, s.name);
+    }
 
     data2.labels = s.timeSerial === null || s.timeSerial === undefined ? ([] as number[]) : (s.timeSerial.timestamps as number[]);
     data2.datasets[0].data = s.timeSerial === null || s.timeSerial === undefined ? ([] as number[]) : s.timeSerial.values;
@@ -164,16 +171,15 @@ const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors }) => {
           //const popupStr = createMarkerPopup(c, settings.showDepth, settings);
           const marker = L.circleMarker(c.coord as [number, number], { color: settings.color, radius: settings.size });
 
-          marker
-            .bindPopup(() => {
-              //console.log('marker', marker);
-              return createMarkerPopup(c, true, settings as sensorConfig);
-              //return 'HEI';
-            })
-            .on('popupclose', () => {
-              //console.log('on close');
-              marker.setPopupContent(createEmptyPopup());
-            });
+          marker.bindPopup(() => {
+            //console.log('marker', marker);
+            return createMarkerPopup(c, true, settings as sensorConfig, data);
+            //return 'HEI';
+          });
+          // .on('popupclose', () => {
+          //   //console.log('on close');
+          //   marker.setPopupContent(createEmptyPopup());
+          // });
 
           markerGroup.addLayer(marker);
         });

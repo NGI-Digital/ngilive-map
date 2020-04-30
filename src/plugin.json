@@ -12,15 +12,14 @@
       "small": "img/logo.svg",
       "large": "img/logo.svg"
     },
-    "links": [
-    ],
+    "links": [],
     "screenshots": [],
     "version": "%VERSION%",
     "updated": "%TODAY%"
   },
 
   "dependencies": {
-    "grafanaVersion": "6.5.x",
+    "grafanaVersion": "6.7.x",
     "plugins": []
   }
 }

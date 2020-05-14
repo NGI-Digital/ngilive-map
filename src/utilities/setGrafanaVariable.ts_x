@@ -13,4 +13,4 @@ const setGrafanaVariable = (name: string, value: string) => {
   });
 };
 
-export { setGrafanaVariable }
+export { setGrafanaVariable };

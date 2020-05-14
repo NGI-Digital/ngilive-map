@@ -124,9 +124,9 @@ export const sensorTypeConfig: sensorConfig[] = [
   {
     type: 'default',
     markerType: 'CircleMarker',
-    color: '#f7b100',
+    color: '#733275',
     size: 5,
     showDepth: false,
-    showPlot: false,
+    showPlot: true,
   },
 ];

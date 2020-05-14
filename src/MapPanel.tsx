@@ -25,7 +25,7 @@ import 'leaflet/dist/leaflet.css';
 import { webcam } from 'types/webcam';
 import extractWebcamsFromGrafanaStream from 'utilities/webcamsDataObjects';
 import { iconCamera } from 'utilities/defineIcons';
-import { setGrafanaVariable } from 'utilities/setGrafanaVariable';
+//import { setGrafanaVariable } from 'utilities/setGrafanaVariable.ts_x';
 
 const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
   const mapElement = useRef<any>();
@@ -47,6 +47,7 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
   }, []);
 
   useEffect(() => {
+    console.log(data);
     const unConvSensors = options.useMockData ? mockSensors : extractSensorsFromGrafanaStream(data);
     const mapSensors: sensor[] = unConvSensors.map(element => projectAndRemapLocObject(element) as sensor);
     const sensorsExtent: envelope = getSensorsExtent(mapSensors);

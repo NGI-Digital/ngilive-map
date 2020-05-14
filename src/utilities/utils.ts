@@ -1,5 +1,6 @@
 import { sensor } from '../types/sensor';
 import { envelope } from '../types/envelope';
+import { formatLabels } from '@grafana/data';
 //import proj4 from 'proj4';
 
 const getSensorsExtent = (sensorArray: sensor[]): envelope => {
@@ -31,4 +32,24 @@ const getSensorsExtent = (sensorArray: sensor[]): envelope => {
   return tmpMapEx;
 };
 
-export { getSensorsExtent };
+const getDateTimeFromTimestamp = (timestamp: number): string => {
+  var d = new Date(timestamp);
+
+  const y = d.getFullYear();
+  const m = d.getMonth() + 1;
+  const day = d.getUTCDay() + 1;
+  //console.log('y', y, 'm', m, 'd', day);
+  // Hours part from the timestamp
+  const hours = d.getHours();
+  // Minutes part from the timestamp
+  const minutes = '0' + d.getMinutes();
+  // Seconds part from the timestamp
+  const seconds = '0' + d.getSeconds();
+
+  // Will display time in 10:30:23 format
+  const formattedTime = y + '.' + m + '.' + day + ' ' + hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+  //const formattedTime = d.toString();
+  return formattedTime;
+};
+
+export { getSensorsExtent, getDateTimeFromTimestamp };

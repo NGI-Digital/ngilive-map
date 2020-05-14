@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLeaflet } from 'react-leaflet';
-import { Map } from 'leaflet';
+import { Map, Util } from 'leaflet';
 import L from 'leaflet';
 import { sensor } from 'types/sensor';
 import { sensorTypeConfig } from 'data/defualtSensorConfig';
@@ -9,22 +9,53 @@ import 'leaflet.markercluster';
 import 'leaflet/dist/leaflet.css';
 import '../MarkerCluster.css';
 import '../MarkerCluster.Default.css';
-import React from 'react';
+//import React from 'react';
+import React, { Component, MouseEvent } from 'react';
 import ReactDOM from 'react-dom';
 import { Line } from 'react-chartjs-2';
 //import merge from 'lodash.chunk';
 import { getColorFromHexRgbOrName } from '@grafana/data';
 import getTimeSerialFromGrafanaStream from '../utilities/sensorTimeSeries';
+//import { Button } from '@grafana/ui';
+import { getDateTimeFromTimestamp } from '../utilities/utils';
 
 type MarkerClusterType = {
   sensors: sensor[];
   data: any;
 };
 
+type SensorValues = {
+  timestamps: [];
+  values: [];
+};
+
 const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors, data }) => {
   const leaflet = useLeaflet();
   const [markerGroup, setMarkerGroup] = useState<any>();
 
+  // const MyButton2: React.Component<SensorValues, {}, any> = ({timestamps: [], values: []}) => {
+  //   render() {
+  //     return <button onClick={this.handleClick}>{this.props.children}</button>;
+  //   }
+  // }
+
+  // class MyButton extends Component<SensorValues> {
+  //   handleClick(event: MouseEvent) {
+  //     event.preventDefault();
+  //     //exportToCsv('test.csv', [1, 2, 3], [10, 11, 12]);
+  //     alert(this.props.timestamps.length); // alerts BUTTON
+  //   }
+  //   render() {
+  //     return <button onClick={this.handleClick}>{this.props.children}</button>;
+  //   }
+  // }
+
+  const buttonStyle = {
+    color: 'black',
+    backgroundColor: 'lightgrey',
+    fontSize: 'small',
+    padding: '0px 3px',
+  };
   const grafPopupStyle = {
     width: '500px',
     height: '300px',
@@ -34,6 +65,36 @@ const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors, data }) => {
     width: '300px',
     height: '200px',
   };
+
+  function exportToCsv(event: React.MouseEvent, filename: string, s: sensor) {
+    var csvFile = '';
+    if (s.timeSerial) {
+      const values = s.timeSerial.values;
+      const timestamps = s.timeSerial.timestamps;
+      for (var i = 0; i < values.length; i++) {
+        csvFile += getDateTimeFromTimestamp(timestamps[i]) + ';' + values[i].toFixed(3) + '\n';
+      }
+
+      var blob = new Blob([csvFile], { type: 'text/csv;charset=utf-8;' });
+      if (navigator.msSaveBlob) {
+        // IE 10+
+        navigator.msSaveBlob(blob, filename);
+      } else {
+        var link = document.createElement('a');
+        if (link.download !== undefined) {
+          // feature detection
+          // Browsers that support HTML5 download attribute
+          var url = URL.createObjectURL(blob);
+          link.setAttribute('href', url);
+          link.setAttribute('download', filename);
+          link.style.visibility = 'hidden';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
+      }
+    }
+  }
 
   function createMarkerPopup(s: sensor, showDepth: boolean, sensorSetting: sensorConfig, data: any) {
     var data2 = {
@@ -88,10 +149,13 @@ const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors, data }) => {
       s.timeSerial = getTimeSerialFromGrafanaStream(data, s.name);
     }
 
+    console.log('Data:', s.timeSerial);
+
     data2.labels = s.timeSerial === null || s.timeSerial === undefined ? ([] as number[]) : (s.timeSerial.timestamps as number[]);
     data2.datasets[0].data = s.timeSerial === null || s.timeSerial === undefined ? ([] as number[]) : s.timeSerial.values;
     data2.datasets[0].label = s.timeSerial === null || s.timeSerial === undefined ? '' : s.instrumentType + '[' + s.unit + ']';
 
+    //var svars = new SensorValues();
     const jsx = (
       <div style={grafPopupStyle}>
         <b>{s.name}</b>
@@ -105,6 +169,7 @@ const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors, data }) => {
         )}
         <br />
         <br />
+        {/* <MyButton>Hei</MyButton> */}
         <table>
           <tr>
             <td>Last value:</td>
@@ -128,6 +193,9 @@ const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors, data }) => {
             <td>{s.mean}</td>
           </tr>
         </table>
+        <button style={buttonStyle} onClick={(e): void => exportToCsv(e, 'sensordata.csv', s)}>
+          Last ned data
+        </button>
         <br />
         {sensorSetting.showPlot && (
           <div style={grafStye}>

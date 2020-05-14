@@ -74,5 +74,66 @@ where  (s.sample_type = $sampleType) AND
 group by i.instrument_name,  s.corr_value , s.sample_date
 order by s.sample_date
 
+##########################
+Query A
+SELECT
+  sensor AS instrument_id,
+  meta->>'name' AS instrument_name,
+  meta->>'pos_east' AS xpos,
+  meta->>'pos_north' AS ypos,
+  meta->>'depth' AS depth,
+  meta->>'coordinate_system' as coordinate_system,
+  meta->>'unit' as unit,
+  meta->>'type' as instrument_type,
+  ROUND(MAX(value)::NUMERIC,2) as min,
+  ROUND(MIN(value)::NUMERIC,2) as max,
+  ROUND(AVG(value)::NUMERIC,2) as avg
+FROM sample
+WHERE
+   $__timeFilter("timestamp") AND
+  meta->>'name' != 'null' AND
+  meta->>'project' = '$project' AND
+  meta->>'pos_east' IS NOT NULL AND
+  (meta->>'type' IN ($Type) OR ('null' in ($Type) AND meta->>'type' IS NULL)) AND
+  (meta->>'area' IN ($Area) OR ('null' in ($Area) AND meta->>'area' IS NULL))
+  group by sensor,meta->>'name',meta->>'pos_east',meta->>'pos_north', meta->>'depth', meta->>'coordinate_system', meta->>'unit', meta->>'type'
+ORDER BY 1,2
+
+Query B
+SELECT
+    sensor as instrument_id,
+    LAST_VALUE(value)
+    OVER(
+        ORDER BY TIMESTAMP
+        RANGE BETWEEN
+            UNBOUNDED PRECEDING AND
+            UNBOUNDED FOLLOWING
+    ) last_value,
+    timestamp
+FROM
+    sample
+WHERE
+   $__timeFilter("timestamp") AND
+  meta->>'name' != 'null' AND
+  meta->>'project' = '$project' AND
+  meta->>'pos_east' IS NOT NULL AND
+  (meta->>'type' IN ($Type) OR ('null' in ($Type) AND meta->>'type' IS NULL)) AND
+  (meta->>'area' IN ($Area) OR ('null' in ($Area) AND meta->>'area' IS NULL))
+
+
+Query C
+SELECT
+  meta->>'name' AS instrument_name,
+  value as corr_value,
+  timestamp as time
+FROM sample
+WHERE
+   $__timeFilter("timestamp") AND
+  meta->>'name' != 'null' AND
+  meta->>'project' = '$project' AND
+  meta->>'pos_east' IS NOT NULL AND
+  (meta->>'type' IN ($Type) OR ('null' in ($Type) AND meta->>'type' IS NULL)) AND
+  (meta->>'area' IN ($Area) OR ('null' in ($Area) AND meta->>'area' IS NULL))
+ORDER BY timestamp
 
 ```

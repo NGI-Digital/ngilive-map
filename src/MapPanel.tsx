@@ -47,7 +47,7 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
   }, []);
 
   useEffect(() => {
-    console.log(data);
+    console.log(options);
     const unConvSensors = options.useMockData ? mockSensors : extractSensorsFromGrafanaStream(data);
     const mapSensors: sensor[] = unConvSensors.map(element => projectAndRemapLocObject(element) as sensor);
     const sensorsExtent: envelope = getSensorsExtent(mapSensors);
@@ -68,13 +68,13 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
       ]);
     }
   }, [data]);
-
   const layerElement = (layer: any) => (
     <>
       {layer.type === 'WMSLayer' && (
         <WMSTileLayer
           url={layer.serviceUrl}
           layers={layer.WMSLayers}
+          opacity={layer.opacity}
           transparent={true}
           format={'image/png'}
           tileSize={layer.tileSize != null ? layer.tileSize : 1024}
@@ -84,6 +84,7 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
         <WMSTileLayer
           url={layer.serviceUrl}
           layers={layer.WMSLayers}
+          opacity={layer.opacity}
           transparent={true}
           format={'image/png'}
           tileSize={layer.tileSize != null ? layer.tileSize : 1024}

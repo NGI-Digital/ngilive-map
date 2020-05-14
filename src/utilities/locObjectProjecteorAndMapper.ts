@@ -14,7 +14,6 @@ const projectAndRemapLocObject = (lokObject: sensor | webcam): sensor | webcam =
     const isNtm = coordSystem.toLowerCase().indexOf('ntm') !== -1;
     const zoneNumber = coordSystem.substring(3);
     const fromCoordSys = isNtm ? `EPSG:51${zoneNumber.length < 2 ? 0 : ''}${zoneNumber}` : `EPSG:258${zoneNumber}`;
-    console.log('fromCoordsSys: ', fromCoordSys);
     // leaflet operates witn (north,east)
     //const coord = proj4(zoneNumber, 'EPSG:4326', [Math.min(east, north), Math.max(east, north)]);
     const coord = proj4(fromCoordSys, 'EPSG:4326', [Math.min(east, north), Math.max(east, north)]);
@@ -22,14 +21,6 @@ const projectAndRemapLocObject = (lokObject: sensor | webcam): sensor | webcam =
     newLokObject.coord = [coord[1], coord[0]];
     return newLokObject;
   } else {
-    //const isNtm = coordSystem.toLowerCase().indexOf('ntm') !== -1;
-    //const zoneNumber = coordSystem.substring(3);
-    //const fromCoordSys = isNtm ? `EPSG:51${zoneNumber.length < 2 ? 0 : ''}${zoneNumber}` : `EPSG:258${zoneNumber}`;
-
-    // leaflet operates witn (north,east)
-    //const coord = proj4(zoneNumber, 'EPSG:4326', [Math.min(east, north), Math.max(east, north)]);
-
-    console.log('fromCoordsSys: ', coordSystem);
     const coord = proj4('EPSG:' + coordSystem, 'EPSG:4326', [Math.min(east, north), Math.max(east, north)]);
 
     newLokObject.coord = [coord[1], coord[0]];

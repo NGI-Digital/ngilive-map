@@ -9,4 +9,6 @@ export type mapLayer = {
   opacity?: number; //0-1
   WMSLayers?: string;
   tileSize?: number;
+  WMSLegendURL?: string;
+  WMSLegendScale?: number;
 };

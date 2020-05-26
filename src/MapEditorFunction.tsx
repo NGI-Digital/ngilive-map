@@ -12,7 +12,7 @@ const MapEditorFunction: React.FC<PanelEditorProps<MapEditorFunctionProps>> = ({
   }, [layers]);
 
   const addRow = () => {
-    console.log('options', options);
+    //console.log('options', options);
     setLayers([...layers, { name: '', serviceUrl: '', type: '', isVisible: false, isBaseMap: false, opacity: 0, WMSLayers: '', tileSize: 1024 }]);
   };
 
@@ -70,7 +70,7 @@ const MapEditorFunction: React.FC<PanelEditorProps<MapEditorFunctionProps>> = ({
                       <FormField
                         label="Layer name"
                         name="name"
-                        labelWidth={10}
+                        labelWidth={6}
                         inputWidth={10}
                         type="text"
                         onChange={event => onChange(event, index)}
@@ -84,14 +84,14 @@ const MapEditorFunction: React.FC<PanelEditorProps<MapEditorFunctionProps>> = ({
                       <FormField
                         label="Service URL"
                         name="serviceUrl"
-                        labelWidth={11}
+                        labelWidth={7}
                         inputWidth={30}
                         type="text"
                         onChange={event => onChange(event, index)}
                         value={l.serviceUrl || ''}
                       />
                       <FormLabel width={4}>Type</FormLabel>
-                      <div className="gf-form-select-wrapper max-width-9">
+                      <div className="gf-form-select-wrapper max-width-15">
                         <select className="input-small gf-form-input" name="type" value={l.type} onChange={event => onChange(event, index)}>
                           <option value="esriTiledMapLayer">esriTiledMapLayer</option>
                           <option value="esriDynamicMapLayer">esriDynamicMapLayer</option>
@@ -104,10 +104,50 @@ const MapEditorFunction: React.FC<PanelEditorProps<MapEditorFunctionProps>> = ({
                       <Switch label="Synlig" checked={l.isVisible} onChange={event => onChange(event, index, 'isVisible')} />
                       <Switch label="Bakgrunn" checked={l.isBaseMap} onChange={event => onChange(event, index, 'isBaseMap')} />
 
-                      <FormLabel width={6}>Opacity</FormLabel>
-                      <input name="opacity" type="number" value={l.opacity} onChange={event => onChange(event, index)}></input>
-                      <FormLabel width={8}>WMSlayers</FormLabel>
-                      <input name="WMSLayers" type="text" value={l.WMSLayers} onChange={event => onChange(event, index)}></input>
+                      {/* <FormLabel width={6}>Opacity</FormLabel>
+                      <input name="opacity" type="number" value={l.opacity} onChange={event => onChange(event, index)}></input> */}
+
+                      <FormField
+                        label="Opacity "
+                        name="opacity"
+                        labelWidth={5}
+                        inputWidth={4}
+                        type="number"
+                        onChange={event => onChange(event, index)}
+                        value={l.opacity || ''}
+                      />
+                    </div>
+                    <div className="gf-form">
+                      {/* <FormLabel width={8}>WMSlayers</FormLabel>
+                      <input name="WMSLayers" type="text" value={l.WMSLayers} onChange={event => onChange(event, index)}></input> */}
+                      <FormField
+                        label="WMSLayers "
+                        name="WMSLayers"
+                        labelWidth={7}
+                        inputWidth={20}
+                        type="text"
+                        onChange={event => onChange(event, index)}
+                        value={l.WMSLayers || ''}
+                      />
+
+                      <FormField
+                        label="WMSlegend URL "
+                        name="WMSLegendURL"
+                        labelWidth={9}
+                        inputWidth={30}
+                        type="text"
+                        onChange={event => onChange(event, index)}
+                        value={l.WMSLegendURL || ''}
+                      />
+                      <FormField
+                        label="WMSlegendheight <NNpx>"
+                        name="WMSLegendScale"
+                        labelWidth={11}
+                        inputWidth={5}
+                        type="text"
+                        onChange={event => onChange(event, index)}
+                        value={l.WMSLegendScale || ''}
+                      />
                     </div>
                   </PanelOptionsGroup>
                 </PanelOptionsGrid>

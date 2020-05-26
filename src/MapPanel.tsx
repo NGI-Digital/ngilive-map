@@ -20,6 +20,7 @@ import { sensorTypeConfig } from 'data/defualtSensorConfig';
 //import { sensorConfig } from 'types/sensorConfig';
 import { PanelProps } from '@grafana/data';
 import LegendControl from 'components/LegendControl';
+import WMSLegendControl from 'components/WMSLegendControl';
 import MarkerCluster from 'components/MarkerCluster';
 import 'leaflet/dist/leaflet.css';
 import { webcam } from 'types/webcam';
@@ -47,7 +48,7 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
   }, []);
 
   useEffect(() => {
-    console.log(options);
+    //console.log(options);
     const unConvSensors = options.useMockData ? mockSensors : extractSensorsFromGrafanaStream(data);
     const mapSensors: sensor[] = unConvSensors.map(element => projectAndRemapLocObject(element) as sensor);
     const sensorsExtent: envelope = getSensorsExtent(mapSensors);
@@ -96,8 +97,12 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
     </>
   );
 
+  function showPopup() {
+    //alert('hei');
+  }
+
   return (
-    <Map ref={mainMap} center={position} zoom={8} maxZoom={18} style={{ height: height, width: width }}>
+    <Map ref={mainMap} center={position} zoom={8} maxZoom={18} style={{ height: height, width: width }} onOverlayremove={showPopup}>
       <LayersControl ref={mapElement} position="bottomright">
         {layers
           .filter(l => l.isBaseMap)
@@ -114,7 +119,10 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
             </LayersControl.Overlay>
           ))}
       </LayersControl>
-      <LegendControl symbols={sensorTypeConfig.filter(ts => sensors.find(s => s.instrumentType === ts.type))}></LegendControl>
+      <LegendControl
+        symbols={sensorTypeConfig.filter(ts => sensors.find(s => (s.instrumentType ? s.instrumentType : 'default') === ts.type))}
+      ></LegendControl>
+      <WMSLegendControl mapLayers={layers}></WMSLegendControl>
       <MarkerCluster sensors={sensors} data={data}></MarkerCluster>
       {webcams.map(c => {
         return (

@@ -1,15 +1,65 @@
-.rcorners1 {
-  border-radius: 25px;
-  background: rgba(255, 255, 255, 0.7);
-  padding: 10px;
-}
-
 .WMSLegendButtonStyle {
   background-image: url(img/legend-small.png);
   border-radius: 5px;
   width: 40px;
   height: 40px;
   padding: 5px;
+}
+/* Tooltip text */
+.WMSLegendButtonStyle .tooltiptext {
+  visibility: hidden;
+  width: 200px;
+  background-color: transparent;
+  color: black;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  z-index: 1;
+  top: -20px;
+  left: 105%;
+}
+
+.WMSLegendButtonStyle:hover .tooltiptext {
+  visibility: visible;
+}
+
+.rcorners1 {
+  border-radius: 25px;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 10px;
+}
+
+.WMSLegendButtonStyleChecked {
+  background-image: url(img/legend-small.png);
+  border-color: magenta;
+  border-radius: 5px;
+  width: 40px;
+  height: 40px;
+  padding: 5px;
+}
+
+/* Tooltip text */
+.WMSLegendButtonStyleChecked .tooltiptext {
+  visibility: hidden;
+  width: 200px;
+  background-color: transparent;
+  color: black;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  z-index: 1;
+  top: -20px;
+  left: 105%;
+}
+
+.WMSLegendButtonStyleChecked:hover .tooltiptext {
+  visibility: visible;
 }
 
 .WMSLegendStyle {

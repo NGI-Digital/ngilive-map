@@ -97,12 +97,8 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
     </>
   );
 
-  function showPopup() {
-    //alert('hei');
-  }
-
   return (
-    <Map ref={mainMap} center={position} zoom={8} maxZoom={18} style={{ height: height, width: width }} onOverlayremove={showPopup}>
+    <Map ref={mainMap} center={position} zoom={8} maxZoom={18} style={{ height: height, width: width }}>
       <LayersControl ref={mapElement} position="bottomright">
         {layers
           .filter(l => l.isBaseMap)

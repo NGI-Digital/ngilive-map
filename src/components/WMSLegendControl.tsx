@@ -27,7 +27,7 @@ const LegendControl: React.FC<WMSLegendControlProps> = ({ mapLayers }) => {
     const buttonHTML = (
       <div>
         <button className="WMSLegendButtonStyle" onClick={(e): void => setIsCollapsed(!isCollapsed)}>
-          <span className="tooltiptext">Vis legende for WMSkartlag</span>
+          <span className="tooltiptext">Vis legende for temakartlag</span>
         </button>
       </div>
     );
@@ -35,7 +35,7 @@ const LegendControl: React.FC<WMSLegendControlProps> = ({ mapLayers }) => {
     const buttonHTMLChecked = (
       <div>
         <button className="WMSLegendButtonStyleChecked" onClick={(e): void => setIsCollapsed(!isCollapsed)}>
-          <span className="tooltiptext">Ingen WMSkartlag synlinge</span>
+          <span className="tooltiptext">Ingen temakartlag synlinge</span>
         </button>
       </div>
     );

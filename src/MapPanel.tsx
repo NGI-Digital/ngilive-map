@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { Map, TileLayer, Popup, Marker, LayersControl, WMSTileLayer } from 'react-leaflet';
+import { Map, TileLayer, Popup, Marker, LayersControl, WMSTileLayer, ScaleControl } from 'react-leaflet';
 import proj4 from 'proj4';
 import projectAndRemapLocObject from 'utilities/locObjectProjecteorAndMapper';
 import defineProjectionZones from 'utilities/defineProjectionZones';
@@ -13,7 +13,7 @@ import { sensor } from 'types/sensor';
 import { mockSensors } from 'data/mockSensors';
 import { mockWebcams } from 'data/mockWebcams';
 //import strutcureMocDataObjects from 'utilities/mocDataObjectsConverter';
-import { Map as LeafletMap } from 'leaflet';
+import { Map as LeafletMap, map } from 'leaflet';
 import { envelope } from 'types/envelope';
 import { getSensorsExtent } from 'utilities/utils';
 import { sensorTypeConfig } from 'data/defualtSensorConfig';
@@ -76,6 +76,7 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
           url={layer.serviceUrl}
           layers={layer.WMSLayers}
           opacity={layer.opacity}
+          version={layer.WMSVersion != null ? layer.WMSVersion : '1.3.0'}
           transparent={true}
           format={'image/png'}
           tileSize={layer.tileSize != null ? layer.tileSize : 1024}
@@ -86,6 +87,7 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
           url={layer.serviceUrl}
           layers={layer.WMSLayers}
           opacity={layer.opacity}
+          version={layer.WMSVersion != null ? layer.WMSVersion : '1.3.0'}
           transparent={true}
           format={'image/png'}
           tileSize={layer.tileSize != null ? layer.tileSize : 1024}
@@ -99,6 +101,7 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
 
   return (
     <Map ref={mainMap} center={position} zoom={8} maxZoom={18} style={{ height: height, width: width }}>
+      <ScaleControl position="bottomright" imperial={false} maxWidth={100}></ScaleControl>
       <LayersControl ref={mapElement} position="bottomright">
         {layers
           .filter(l => l.isBaseMap)

@@ -66,7 +66,8 @@ const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors, data }) => {
     height: '200px',
   };
 
-  function exportToCsv(event: React.MouseEvent, filename: string, s: sensor) {
+  function exportToCsv(event: React.MouseEvent, s: sensor) {
+    const filename = s.name + '.csv';
     var csvFile = '';
     if (s.timeSerial) {
       const values = s.timeSerial.values;
@@ -172,11 +173,11 @@ const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors, data }) => {
           <tr>
             <td>Last value:</td>
             <td>{s.lastValue}</td>
-            {/* <td rowSpan={4}>
-              <div style={grafStye}>
-                <Line data={data2} options={options}></Line>
-              </div>
-            </td> */}
+            <td style={{ textAlign: 'center', verticalAlign: 'middle', width: '150px' }} rowSpan={4}>
+              <button style={buttonStyle} onClick={(e): void => exportToCsv(e, s)}>
+                Last ned data
+              </button>
+            </td>
           </tr>
           <tr>
             <td>Max:</td>
@@ -191,9 +192,6 @@ const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors, data }) => {
             <td>{s.mean}</td>
           </tr>
         </table>
-        <button style={buttonStyle} onClick={(e): void => exportToCsv(e, 'sensordata.csv', s)}>
-          Last ned data
-        </button>
         <br />
         {sensorSetting.showPlot && (
           <div style={grafStye}>

@@ -148,6 +148,15 @@ const MapEditorFunction: React.FC<PanelEditorProps<MapEditorFunctionProps>> = ({
                         onChange={event => onChange(event, index)}
                         value={l.WMSLegendScale || ''}
                       />
+                      <FormField
+                        label="WMS version"
+                        name="WMSVersion"
+                        labelWidth={7}
+                        inputWidth={4}
+                        type="text"
+                        onChange={event => onChange(event, index)}
+                        value={l.WMSVersion || ''}
+                      />
                     </div>
                   </PanelOptionsGroup>
                 </PanelOptionsGrid>

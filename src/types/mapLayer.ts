@@ -11,4 +11,5 @@ export type mapLayer = {
   tileSize?: number;
   WMSLegendURL?: string;
   WMSLegendScale?: number;
+  WMSVersion?: string;
 };

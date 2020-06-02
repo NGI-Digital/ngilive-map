@@ -28,6 +28,9 @@ Test released version in local Docker
 grafana-cli --debug --pluginUrl=https://github.com/NGI-Digital/ngilive-map/releases/download/v<xx.yy>/ngilive-map-<xx.yy>.zip plugins install ngilive-map
 ```
 
+Kubernetes:
+grafana-cli --debug --pluginsDir /opt/bitnami/grafana/data/plugins --pluginUrl=https://github.com/NGI-Digital/ngilive-map/releases/download/v0.7/ngilive-map-0.8.zip plugins install ngilive-map
+
 Set up Grafana environment locally
 
 ```

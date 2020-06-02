@@ -56,7 +56,7 @@ const LegendControl: React.FC<WMSLegendControlProps> = ({ mapLayers }) => {
       </div>
     );
 
-    console.log('Antall:', counter);
+    // console.log('Antall:', counter);
     const div = L.DomUtil.create('div', '');
     if (!isCollapsed && counter == 0) {
       ReactDOM.render(buttonHTMLChecked, div);
@@ -68,13 +68,13 @@ const LegendControl: React.FC<WMSLegendControlProps> = ({ mapLayers }) => {
     return div;
   }
 
-  useEffect(() => {
-    console.log('her er jeg XX');
-    console.log('includLayersInLegendXX', includLayersInLegend);
-  }, [mapLayers]);
+  // useEffect(() => {
+  //   console.log('her er jeg XX');
+  //   console.log('includLayersInLegendXX', includLayersInLegend);
+  // }, [mapLayers]);
 
   useEffect(() => {
-    console.log('her er jeg #1');
+    // console.log('her er jeg #1');
     if (control) {
       control.onAdd = map => {
         const ht = createContent();

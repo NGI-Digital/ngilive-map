@@ -8,6 +8,7 @@ export const sensorTypeConfig: sensorConfig[] = [
     size: 5,
     showDepth: false,
     showPlot: true,
+    showInLegend: true,
   },
   {
     type: 'Grunnvann',
@@ -16,6 +17,7 @@ export const sensorTypeConfig: sensorConfig[] = [
     size: 5,
     showDepth: false,
     showPlot: true,
+    showInLegend: true,
   },
   {
     type: 'Lufttemp',
@@ -24,6 +26,7 @@ export const sensorTypeConfig: sensorConfig[] = [
     size: 5,
     showDepth: false,
     showPlot: true,
+    showInLegend: true,
   },
   {
     type: 'Lufttrykk',
@@ -32,6 +35,7 @@ export const sensorTypeConfig: sensorConfig[] = [
     size: 5,
     showDepth: false,
     showPlot: true,
+    showInLegend: true,
   },
   {
     type: 'Miljø',
@@ -40,6 +44,7 @@ export const sensorTypeConfig: sensorConfig[] = [
     size: 5,
     showDepth: false,
     showPlot: true,
+    showInLegend: true,
   },
   {
     type: 'Nedbør',
@@ -48,6 +53,7 @@ export const sensorTypeConfig: sensorConfig[] = [
     size: 5,
     showDepth: false,
     showPlot: true,
+    showInLegend: true,
   },
   {
     type: 'Pakkertrykk',
@@ -56,6 +62,7 @@ export const sensorTypeConfig: sensorConfig[] = [
     size: 5,
     showDepth: false,
     showPlot: true,
+    showInLegend: true,
   },
   {
     type: 'Poretrykk',
@@ -64,6 +71,7 @@ export const sensorTypeConfig: sensorConfig[] = [
     size: 5,
     showDepth: true,
     showPlot: true,
+    showInLegend: true,
   },
   {
     type: 'Vannstand',
@@ -72,6 +80,7 @@ export const sensorTypeConfig: sensorConfig[] = [
     size: 5,
     showDepth: false,
     showPlot: true,
+    showInLegend: true,
   },
   {
     type: 'Vannstrøm',
@@ -80,6 +89,7 @@ export const sensorTypeConfig: sensorConfig[] = [
     size: 5,
     showDepth: false,
     showPlot: true,
+    showInLegend: true,
   },
   {
     type: 'zBat12V',
@@ -88,6 +98,7 @@ export const sensorTypeConfig: sensorConfig[] = [
     size: 5,
     showDepth: false,
     showPlot: false,
+    showInLegend: false,
   },
   {
     type: 'zBat15V',
@@ -96,6 +107,7 @@ export const sensorTypeConfig: sensorConfig[] = [
     size: 5,
     showDepth: false,
     showPlot: false,
+    showInLegend: false,
   },
   {
     type: 'zBat18V',
@@ -104,6 +116,7 @@ export const sensorTypeConfig: sensorConfig[] = [
     size: 5,
     showDepth: false,
     showPlot: false,
+    showInLegend: false,
   },
   {
     type: 'zBat24V',
@@ -112,6 +125,7 @@ export const sensorTypeConfig: sensorConfig[] = [
     size: 5,
     showDepth: false,
     showPlot: false,
+    showInLegend: false,
   },
   {
     type: 'zBat3V',
@@ -120,6 +134,7 @@ export const sensorTypeConfig: sensorConfig[] = [
     size: 5,
     showDepth: false,
     showPlot: false,
+    showInLegend: false,
   },
   {
     type: 'default',
@@ -128,5 +143,6 @@ export const sensorTypeConfig: sensorConfig[] = [
     size: 5,
     showDepth: false,
     showPlot: true,
+    showInLegend: false,
   },
 ];

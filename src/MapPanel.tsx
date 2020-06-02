@@ -75,7 +75,7 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
         <WMSTileLayer
           url={layer.serviceUrl}
           layers={layer.WMSLayers}
-          opacity={layer.opacity}
+          opacity={layer.opacity != null ? layer.opacity : '1.0'}
           version={layer.WMSVersion != null ? layer.WMSVersion : '1.3.0'}
           transparent={true}
           format={'image/png'}
@@ -86,7 +86,7 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
         <WMSTileLayer
           url={layer.serviceUrl}
           layers={layer.WMSLayers}
-          opacity={layer.opacity}
+          opacity={layer.opacity != null ? layer.opacity : '1.0'}
           version={layer.WMSVersion != null ? layer.WMSVersion : '1.3.0'}
           transparent={true}
           format={'image/png'}

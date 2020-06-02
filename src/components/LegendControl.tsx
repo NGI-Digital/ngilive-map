@@ -19,16 +19,18 @@ const LegendControl: React.FC<LegendControlProps> = ({ symbols }) => {
   function createContent() {
     const jsx = (
       <div className="rcorners1">
-        {symbols.map(s => {
-          return (
-            <>
-              <div>
-                <span style={{ backgroundColor: s.color, width: '100px', height: '10px' }}>&nbsp;&nbsp;&nbsp;</span>
-                <span style={{ color: '#000000', backgroundColor: '#FFFFFF' }}>&nbsp;{s.type}</span>
-              </div>
-            </>
-          );
-        })}
+        {symbols
+          .filter(s => s.showInLegend)
+          .map(s => {
+            return (
+              <>
+                <div>
+                  <span style={{ backgroundColor: s.color, width: '100px', height: '10px' }}>&nbsp;&nbsp;&nbsp;</span>
+                  <span style={{ color: '#000000', backgroundColor: '#FFFFFF' }}>&nbsp;{s.type}</span>
+                </div>
+              </>
+            );
+          })}
       </div>
     );
 

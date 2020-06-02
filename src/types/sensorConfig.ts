@@ -6,4 +6,5 @@ export type sensorConfig = {
   size: number;
   showDepth: boolean;
   showPlot: boolean;
+  showInLegend: boolean;
 };

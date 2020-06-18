@@ -43,7 +43,7 @@ const LegendControl: React.FC<WMSLegendControlProps> = ({ mapLayers }) => {
     const legehtHTML = (
       <div className="WMSLegendStyle" onClick={(e): void => setIsCollapsed(true)}>
         {mapLayers
-          .filter(l => l.WMSLegendURL != null && l.WMSLegendURL != '')
+          .filter(l => l.WMSLegendURL !== null && l.WMSLegendURL !== '')
           .filter(l => includLayersInLegend.includes(l.name) || l.isVisible === true)
           .map(l => {
             counter++;
@@ -58,7 +58,7 @@ const LegendControl: React.FC<WMSLegendControlProps> = ({ mapLayers }) => {
 
     // console.log('Antall:', counter);
     const div = L.DomUtil.create('div', '');
-    if (!isCollapsed && counter == 0) {
+    if (!isCollapsed && counter === 0) {
       ReactDOM.render(buttonHTMLChecked, div);
     } else if (isCollapsed) {
       ReactDOM.render(buttonHTML, div);

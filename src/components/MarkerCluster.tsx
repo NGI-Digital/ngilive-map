@@ -5,7 +5,7 @@ import L from 'leaflet';
 import { sensor } from 'types/sensor';
 import { sensorTypeConfig } from 'data/defualtSensorConfig';
 import { sensorConfig } from 'types/sensorConfig';
-import 'leaflet.markercluster';
+import '@ngi-digital/leaflet.markercluster';
 import 'leaflet/dist/leaflet.css';
 import '../MarkerCluster.css';
 import '../MarkerCluster.Default.css';
@@ -218,6 +218,9 @@ const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors, data }) => {
       zoomToBoundsOnClick: false,
       showCoverageOnHover: false,
       spiderfyOnMaxZoom: true,
+      // @ts-ignore
+      spiderfyAllOnMaxZoom: true 
+      
     });
     setMarkerGroup(mcg);
   }, []);
@@ -232,25 +235,17 @@ const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors, data }) => {
             settings = sensorTypeConfig.find(t => t.type === 'default') as sensorConfig;
           }
 
-          //const popupStr = createMarkerPopup(c, settings.showDepth, settings);
           const marker = L.circleMarker(c.coord as [number, number], { color: settings.color, radius: settings.size });
 
           marker.bindPopup(() => {
-            //console.log('marker', marker);
             return createMarkerPopup(c, true, settings as sensorConfig, data);
-            //return 'HEI';
           });
-          // .on('popupclose', () => {
-          //   //console.log('on close');
-          //   marker.setPopupContent(createEmptyPopup());
-          // });
 
           markerGroup.addLayer(marker);
         });
 
         (leaflet.map as Map).addLayer(markerGroup);
 
-        //console.log('Markergroup added: ', markerGroup);
       }
     }
   }, [sensors, markerGroup]);

@@ -4,14 +4,16 @@ export const mockLayers: mapLayer[] = [
   {
     name: 'Flybilder',
     type: 'tiledLayer',
-    serviceUrl: 'https://services.geodataonline.no/arcgis/rest/services/Geocache_WMAS_WGS84/GeocacheBilder/MapServer/tile/{z}/{y}/{x}',
+    serviceUrl:
+      'https://services.geodataonline.no/arcgis/rest/services/Geocache_WMAS_WGS84/GeocacheBilder/MapServer/tile/{z}/{y}/{x}',
     isVisible: false,
     isBaseMap: true,
   },
   {
     name: 'Topgrafi',
     type: 'tiledLayer',
-    serviceUrl: 'https://services.geodataonline.no/arcgis/rest/services/Geocache_WMAS_WGS84/GeocacheBasis/MapServer/tile/{z}/{y}/{x}',
+    serviceUrl:
+      'https://services.geodataonline.no/arcgis/rest/services/Geocache_WMAS_WGS84/GeocacheBasis/MapServer/tile/{z}/{y}/{x}',
     isVisible: true,
     isBaseMap: true,
   },

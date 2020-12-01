@@ -13,7 +13,19 @@ const MapEditorFunction: React.FC<PanelEditorProps<MapEditorFunctionProps>> = ({
 
   const addRow = () => {
     //console.log('options', options);
-    setLayers([...layers, { name: '', serviceUrl: '', type: '', isVisible: false, isBaseMap: false, opacity: 0, WMSLayers: '', tileSize: 1024 }]);
+    setLayers([
+      ...layers,
+      {
+        name: '',
+        serviceUrl: '',
+        type: '',
+        isVisible: false,
+        isBaseMap: false,
+        opacity: 0,
+        WMSLayers: '',
+        tileSize: 1024,
+      },
+    ]);
   };
 
   const removeRow = (index: number) => {
@@ -92,7 +104,12 @@ const MapEditorFunction: React.FC<PanelEditorProps<MapEditorFunctionProps>> = ({
                       />
                       <FormLabel width={4}>Type</FormLabel>
                       <div className="gf-form-select-wrapper max-width-15">
-                        <select className="input-small gf-form-input" name="type" value={l.type} onChange={event => onChange(event, index)}>
+                        <select
+                          className="input-small gf-form-input"
+                          name="type"
+                          value={l.type}
+                          onChange={event => onChange(event, index)}
+                        >
                           <option value="esriTiledMapLayer">esriTiledMapLayer</option>
                           <option value="esriDynamicMapLayer">esriDynamicMapLayer</option>
                           <option value="WMSLayer">WMSLayer</option>
@@ -101,8 +118,16 @@ const MapEditorFunction: React.FC<PanelEditorProps<MapEditorFunctionProps>> = ({
                         </select>
                       </div>
 
-                      <Switch label="Synlig" checked={l.isVisible} onChange={event => onChange(event, index, 'isVisible')} />
-                      <Switch label="Bakgrunn" checked={l.isBaseMap} onChange={event => onChange(event, index, 'isBaseMap')} />
+                      <Switch
+                        label="Synlig"
+                        checked={l.isVisible}
+                        onChange={event => onChange(event, index, 'isVisible')}
+                      />
+                      <Switch
+                        label="Bakgrunn"
+                        checked={l.isBaseMap}
+                        onChange={event => onChange(event, index, 'isBaseMap')}
+                      />
 
                       {/* <FormLabel width={6}>Opacity</FormLabel>
                       <input name="opacity" type="number" value={l.opacity} onChange={event => onChange(event, index)}></input> */}

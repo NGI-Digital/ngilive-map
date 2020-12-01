@@ -16,7 +16,12 @@ function getFieldIndex(fieldName: string, fieldsArray: any) {
   return -1;
 }
 
-function getLastValueForInstrumentID(instrumentID: string, dataArray: any, instrumentIdFieldIndex: number, lastValueFieldIndex: number) {
+function getLastValueForInstrumentID(
+  instrumentID: string,
+  dataArray: any,
+  instrumentIdFieldIndex: number,
+  lastValueFieldIndex: number
+) {
   const numRecords = dataArray.fields[0].values.buffer.length;
   let rowNr = 0;
 

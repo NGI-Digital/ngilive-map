@@ -13,7 +13,7 @@ import { sensor } from 'types/sensor';
 import { mockSensors } from 'data/mockSensors';
 import { mockWebcams } from 'data/mockWebcams';
 //import strutcureMocDataObjects from 'utilities/mocDataObjectsConverter';
-import { Map as LeafletMap, map } from 'leaflet';
+import { Map as LeafletMap } from 'leaflet';
 import { envelope } from 'types/envelope';
 import { getSensorsExtent } from 'utilities/utils';
 import { sensorTypeConfig } from 'data/defualtSensorConfig';
@@ -48,6 +48,7 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
   }, []);
 
   useEffect(() => {
+    console.log('updated');
     //console.log(options);
     const unConvSensors = options.useMockData ? mockSensors : extractSensorsFromGrafanaStream(data);
     const mapSensors: sensor[] = unConvSensors.map(element => projectAndRemapLocObject(element) as sensor);
@@ -119,7 +120,9 @@ const MapPanel: React.FC<PanelProps> = ({ options, data, height, width }) => {
           ))}
       </LayersControl>
       <LegendControl
-        symbols={sensorTypeConfig.filter(ts => sensors.find(s => (s.instrumentType ? s.instrumentType : 'default') === ts.type))}
+        symbols={sensorTypeConfig.filter(ts =>
+          sensors.find(s => (s.instrumentType ? s.instrumentType : 'default') === ts.type)
+        )}
       ></LegendControl>
       <WMSLegendControl mapLayers={layers}></WMSLegendControl>
       <MarkerCluster sensors={sensors} data={data}></MarkerCluster>

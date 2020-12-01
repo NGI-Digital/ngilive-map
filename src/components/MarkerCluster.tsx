@@ -150,9 +150,12 @@ const MarkerCluster: React.FC<MarkerClusterType> = ({ sensors, data }) => {
       s.timeSerial = getTimeSerialFromGrafanaStream(data, s.name);
     }
 
-    data2.labels = s.timeSerial === null || s.timeSerial === undefined ? ([] as number[]) : (s.timeSerial.timestamps as number[]);
-    data2.datasets[0].data = s.timeSerial === null || s.timeSerial === undefined ? ([] as number[]) : s.timeSerial.values;
-    data2.datasets[0].label = s.timeSerial === null || s.timeSerial === undefined ? '' : s.instrumentType + '[' + s.unit + ']';
+    data2.labels =
+      s.timeSerial === null || s.timeSerial === undefined ? ([] as number[]) : (s.timeSerial.timestamps as number[]);
+    data2.datasets[0].data =
+      s.timeSerial === null || s.timeSerial === undefined ? ([] as number[]) : s.timeSerial.values;
+    data2.datasets[0].label =
+      s.timeSerial === null || s.timeSerial === undefined ? '' : s.instrumentType + '[' + s.unit + ']';
 
     //var svars = new SensorValues();
     const jsx = (

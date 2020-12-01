@@ -10,8 +10,8 @@ const getTimeSerialFromGrafanaStream = (data: any, sensorName: string): sensorTi
   for (let serial of series) {
     if (typeof serial.name !== 'undefined') {
       if (serial.name === sensorName) {
-        const vals = serial.fields[0].values.buffer;
-        const timestamps = serial.fields[1].values.buffer;
+        const vals = serial.fields[1].values.buffer;
+        const timestamps = serial.fields[0].values.buffer;
         returnData.values = vals;
         returnData.timestamps = timestamps;
       }

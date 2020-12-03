@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { MapControl, useLeaflet } from 'react-leaflet';
+import { useMap } from 'react-leaflet';
 //import { MapControlProps } from 'react-leaflet';
 import ReactDOM from 'react-dom';
 import L from 'leaflet';
@@ -13,7 +13,7 @@ type LegendControlProps = {
 };
 
 const LegendControl: React.FC<LegendControlProps> = ({ symbols }) => {
-  const leaflet = useLeaflet();
+  const map = useMap();
   const [control, setControl] = useState<L.Control | null>(null);
 
   function createContent() {
@@ -39,20 +39,21 @@ const LegendControl: React.FC<LegendControlProps> = ({ symbols }) => {
     return div;
   }
 
-  useEffect(() => {
-    if (control) {
-      control.onAdd = map => {
-        return createContent();
-      };
+  // TODO: Fix
+  // useEffect(() => {
+  //   if (control) {
+  //     control.onAdd = map => {
+  //       return createContent();
+  //     };
 
-      control.onRemove = map => {};
+  //     control.onRemove = map => {};
 
-      if (control) {
-        (leaflet.map as L.Map).removeControl(control);
-      }
-      control.addTo(leaflet.map as L.Map);
-    }
-  }, [symbols, control]);
+  //     if (control) {
+  //       map.removeControl(control);
+  //     }
+  //     control.addTo(map);
+  //   }
+  // }, [symbols, control, map, createContent]);
 
   useEffect(() => {
     const c = new L.Control({ position: 'topright' });

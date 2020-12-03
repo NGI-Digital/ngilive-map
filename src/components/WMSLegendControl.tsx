@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { MapControl, useLeaflet, LayersControl } from 'react-leaflet';
+import { useMap } from 'react-leaflet';
 //import { MapControlProps } from 'react-leaflet';
 import ReactDOM from 'react-dom';
 import L from 'leaflet';
@@ -15,7 +15,7 @@ type WMSLegendControlProps = {
 };
 
 const LegendControl: React.FC<WMSLegendControlProps> = ({ mapLayers }) => {
-  const leaflet = useLeaflet();
+  const map = useMap();
   const [control, setControl] = useState<L.Control | null>(null);
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [includLayersInLegend, setIncludeLayersInLegend] = useState<string[]>([]);
@@ -73,45 +73,46 @@ const LegendControl: React.FC<WMSLegendControlProps> = ({ mapLayers }) => {
   //   console.log('includLayersInLegendXX', includLayersInLegend);
   // }, [mapLayers]);
 
-  useEffect(() => {
-    // console.log('her er jeg #1');
-    if (control) {
-      control.onAdd = map => {
-        const ht = createContent();
-        return ht;
-      };
+  // TODO: Fix
+  // useEffect(() => {
+  //   // console.log('her er jeg #1');
+  //   if (control) {
+  //     control.onAdd = map => {
+  //       const ht = createContent();
+  //       return ht;
+  //     };
 
-      control.onRemove = map => {};
+  //     control.onRemove = map => {};
 
-      if (control) {
-        (leaflet.map as L.Map).removeControl(control);
-      }
-      control.addTo(leaflet.map as L.Map);
-    }
-  }, [mapLayers, control, isCollapsed, includLayersInLegend]);
+  //     if (control) {
+  //       map.removeControl(control);
+  //     }
+  //     control.addTo(map);
+  //   }
+  // }, [mapLayers, control, isCollapsed, includLayersInLegend, createContent, map]);
 
-  useEffect(() => {
-    // notIncludeLayers = [];
+  // useEffect(() => {
+  //   // notIncludeLayers = [];
 
-    const c = new L.Control({ position: 'bottomleft' });
-    console.log('her er jeg');
+  //   const c = new L.Control({ position: 'bottomleft' });
+  //   console.log('her er jeg');
 
-    if (leaflet.map) {
-      leaflet.map.addEventListener('overlayremove', (e: any) => {
-        console.log('her');
-        // const newArr = includLayersInLegend.filter(s => s !== e.name);
-        setIncludeLayersInLegend(state => state.filter(s => s !== e.name));
-      });
-      leaflet.map.addEventListener('overlayadd', (e: any) => {
-        console.log(includLayersInLegend, e.name);
-        console.log('Pakka ut:', ...includLayersInLegend);
-        setIncludeLayersInLegend(state => [...state, e.name]);
-        console.log(includLayersInLegend, e.name);
-      });
-    }
+  //   if (map) {
+  //     map.addEventListener('overlayremove', (e: any) => {
+  //       console.log('her');
+  //       // const newArr = includLayersInLegend.filter(s => s !== e.name);
+  //       setIncludeLayersInLegend(state => state.filter(s => s !== e.name));
+  //     });
+  //     map.addEventListener('overlayadd', (e: any) => {
+  //       console.log(includLayersInLegend, e.name);
+  //       console.log('Pakka ut:', ...includLayersInLegend);
+  //       setIncludeLayersInLegend(state => [...state, e.name]);
+  //       console.log(includLayersInLegend, e.name);
+  //     });
+  //   }
 
-    setControl(c);
-  }, []);
+  //   setControl(c);
+  // }, [includLayersInLegend, map]);
 
   return <></>;
 };

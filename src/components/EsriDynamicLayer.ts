@@ -1,18 +1,17 @@
 import { useEffect } from 'react';
-import { useLeaflet } from 'react-leaflet';
+import { useMap } from 'react-leaflet';
 import * as esri from 'esri-leaflet';
-import { Map } from 'leaflet';
 
 const EsriDynamicLayer = (props: any) => {
-  const leaflet = useLeaflet();
+  const map = useMap();
 
   useEffect(() => {
     const layer = esri.dynamicMapLayer({
       url: props.url,
       maxZoom: 20,
     });
-    layer.addTo(leaflet.layerContainer as Map);
-  }, []);
+    layer.addTo(map);
+  }, [map, props.url]);
 
   return null;
 };

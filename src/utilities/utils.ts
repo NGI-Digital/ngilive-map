@@ -1,16 +1,16 @@
-import { sensor } from '../types/sensor';
+import { Sensor } from '../types/sensor';
 import { envelope } from '../types/envelope';
 import { formatLabels } from '@grafana/data';
 //import proj4 from 'proj4';
 
-const getSensorsExtent = (sensorArray: sensor[]): envelope => {
+const getSensorsExtent = (sensorArray: Sensor[]): envelope => {
   const tmpMapEx: envelope = {
     minX: 9999999999,
     maxX: -9999999999,
     minY: 999999999,
     maxY: -9999999999,
   };
-  sensorArray.forEach((sensor: sensor) => {
+  sensorArray.forEach((sensor: Sensor) => {
     tmpMapEx.minX = tmpMapEx.minX > sensor.coord[0] ? sensor.coord[0] : tmpMapEx.minX;
     tmpMapEx.maxX = tmpMapEx.maxX < sensor.coord[0] ? sensor.coord[0] : tmpMapEx.maxX;
     tmpMapEx.minY = tmpMapEx.minY > sensor.coord[1] ? sensor.coord[1] : tmpMapEx.minY;

@@ -1,3 +1,7 @@
 node_modules
 build
 dist
+notes.md
+ngilive.zip
+tmp
+.DS_Store

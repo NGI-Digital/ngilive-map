@@ -1,7 +1,7 @@
 // Defines type sensor that is used before and after projetion
 import { sensorTimeSerial } from './sensorTimeSierial';
 
-export type sensor = {
+export type Sensor = {
   name: string;
   id: number;
   coord: number[];

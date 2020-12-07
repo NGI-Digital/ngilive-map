@@ -1,8 +1,8 @@
 import proj4 from 'proj4';
-import { sensor } from '../types/sensor';
+import { Sensor } from '../types/sensor';
 import { webcam } from '../types/webcam';
 
-const projectAndRemapLocObject = (lokObject: sensor | webcam): sensor | webcam => {
+const projectAndRemapLocObject = (lokObject: Sensor | webcam): Sensor | webcam => {
   // Clone the current object to prevent messing with Grafans data object
   let newLokObject = { ...lokObject };
 

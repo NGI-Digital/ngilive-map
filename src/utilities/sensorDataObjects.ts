@@ -1,4 +1,4 @@
-import { sensor } from 'types/sensor';
+import { Sensor } from 'types/sensor';
 import getTimeSerialFromGrafanaStream from './sensorTimeSeries';
 //import { FilterFieldsByNameTransformerOptions } from '@grafana/data';
 
@@ -38,13 +38,13 @@ function getLastValueForInstrumentID(
   return retValue;
 }
 
-const extractSensorsFromGrafanaStream = (data: any): sensor[] => {
+const extractSensorsFromGrafanaStream = (data: any): Sensor[] => {
   //console.log('dataobject:', data);
   const s = data.series[0];
   // Require a query B with two field instrument_id and last_value
   const lastValues = data.series[1];
   const len = s.fields[0].values.buffer.length;
-  const returnArray: sensor[] = [];
+  const returnArray: Sensor[] = [];
 
   //field indexes for main query (A)
   const colonPos: FieldsPosHash = {};
@@ -78,7 +78,7 @@ const extractSensorsFromGrafanaStream = (data: any): sensor[] => {
       continue;
     }
 
-    const us: sensor = {
+    const us: Sensor = {
       name: s.fields[colonPos['instrument_name']].values.buffer[i],
       id: s.fields[colonPos['instrument_id']].values.buffer[i],
       coord: [s.fields[colonPos['xpos']].values.buffer[i], s.fields[colonPos['ypos']].values.buffer[i]],

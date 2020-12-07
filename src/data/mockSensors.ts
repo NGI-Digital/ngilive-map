@@ -1,5 +1,5 @@
-import { sensor } from 'types/sensor';
-export const mockSensors: sensor[] = [
+import { Sensor } from 'types/sensor';
+export const mockSensors: Sensor[] = [
   {
     name: 'ab',
     id: 10,

@@ -9,6 +9,7 @@ import {
   CircleMarker,
   Tooltip,
   Polyline,
+  useMapEvents,
 } from 'react-leaflet';
 import proj4 from 'proj4';
 import projectAndRemapLocObject from 'utilities/locObjectProjecteorAndMapper';
@@ -18,7 +19,7 @@ import { mockLayers } from 'data/mockLayers';
 import EsriTiledMapLayer from 'components/EsriTiledMapLayer';
 import EsriDynamicLayer from 'components/EsriDynamicLayer';
 import extractSensorsFromGrafanaStream from 'utilities/sensorDataObjects';
-import { sensor } from 'types/sensor';
+import { Sensor } from 'types/sensor';
 import { mockSensors } from 'data/mockSensors';
 import { mockWebcams } from 'data/mockWebcams';
 import { LatLngExpression, PointExpression } from 'leaflet';
@@ -32,22 +33,42 @@ import { webcam } from 'types/webcam';
 import extractWebcamsFromGrafanaStream from 'utilities/webcamsDataObjects';
 import { iconCamera } from 'utilities/defineIcons';
 import { sensorConfig } from 'types/sensorConfig';
+import { SensorMarker } from 'SensorMarker';
+import { GroupMarker } from 'GroupMarker';
 
 type MapPanelProps = {
   options: any;
   data: any;
 };
 
-type MapMarker = {
+export type MapMarker = {
   position: LatLngExpression;
   name: string;
   type: string;
+  sensor: Sensor;
+  config: sensorConfig;
 };
 
-type MapMarkerGroup = {
+export type MapMarkerGroup = {
   markers: MapMarker[];
   center: LatLngExpression;
   toggleOpen: boolean | undefined;
+};
+
+const buttonStyle = {
+  color: 'black',
+  backgroundColor: 'lightgrey',
+  fontSize: 'small',
+  padding: '0px 3px',
+};
+const grafPopupStyle = {
+  width: '500px',
+  height: '300px',
+};
+
+const grafStye = {
+  width: '300px',
+  height: '200px',
 };
 
 const MapPanel: React.FC<MapPanelProps> = ({ options, data }) => {
@@ -55,9 +76,9 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data }) => {
   const map = useMap();
   const [mapMarkerGroups, setMapMarkerGroups] = useState<MapMarkerGroup[]>([]);
   const [webcams, setWebcams] = useState<webcam[]>([]);
-  const [sensors, setSensors] = useState<sensor[]>([]);
+  const [sensors, setSensors] = useState<Sensor[]>([]);
   const [layers, setLayers] = useState<mapLayer[]>([]);
-  const [currentZoom] = useState<number>(map.getZoom());
+  const [currentZoom, setCurrentZoom] = useState<number>(map.getZoom());
 
   useEffect(() => {
     proj4.defs(defineProjectionZones());
@@ -73,7 +94,10 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data }) => {
     console.log('updated');
     //console.log(options);
     const unConvSensors = options.useMockData ? mockSensors : extractSensorsFromGrafanaStream(data);
-    const mapSensors: sensor[] = unConvSensors.map(element => projectAndRemapLocObject(element) as sensor);
+    console.log({ unConvSensors });
+    const mapSensors: Sensor[] = unConvSensors
+      .map(element => projectAndRemapLocObject(element) as Sensor)
+      .filter(s => s.coord[0] > 1 && s.coord[1] > 1);
     const sensorsExtent: envelope = getSensorsExtent(mapSensors);
     setSensors(mapSensors);
 
@@ -89,7 +113,13 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data }) => {
       mapSensors.forEach(s => {
         const pos = s.coord as LatLngExpression;
         const existingGroup = mGroups.find(m => m.center[0] === pos[0] && m.center[1] === pos[1]);
-        const sensorToPush = { name: s.name, position: pos, type: s.instrumentType } as MapMarker;
+        const sensorToPush = {
+          name: s.name,
+          position: pos,
+          type: s.instrumentType,
+          sensor: s,
+          config: getSensorConfig(s.instrumentType),
+        } as MapMarker;
         if (existingGroup) {
           existingGroup.markers.push(sensorToPush);
         } else {
@@ -111,47 +141,23 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data }) => {
     }
   }, [data, map, options.enableWebCams, options.useMockData]);
 
+  const toggleOpen = (index: number) => {
+    const state = [...mapMarkerGroups];
+    state[index].toggleOpen = !mapMarkerGroups[index].toggleOpen;
+    setMapMarkerGroups(state);
+  }
+
   const getSpreadMarkers = (markerGroup: MapMarkerGroup): MapMarker[] => {
     const center = map.latLngToLayerPoint(markerGroup.center);
     const numberOfSensors = markerGroup.markers.length;
     const zoom = map.getZoom();
 
     const factor = -21;
-
-    const addOnZoom = [
-      0,
-      50,
-      50,
-      100,
-      125,
-      150,
-      175,
-      200,
-      225,
-      250,
-      275,
-      300,
-      325,
-      350,
-      375,
-      400, // 15
-      425,
-      450,
-      475,
-      500,
-      525,
-      550,
-      575,
-    ];
-
-    const add = addOnZoom[zoom];
-
-
-    const circumference = factor * zoom + add + numberOfSensors * 7;
-    let legLength = (circumference / Math.PI) * 2;
+    const addFactor = 22 * zoom;
+    const circumference = factor * zoom + addFactor + numberOfSensors * 11;
+    const legLength = (circumference / Math.PI) * 2;
 
     const angleStep = (Math.PI * 2) / (numberOfSensors > 2 ? numberOfSensors : 5);
-    legLength = Math.max(legLength, 5);
     let iteration = 0;
 
     return markerGroup.markers.map(m => {
@@ -166,6 +172,8 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data }) => {
         name: m.name,
         position: map.layerPointToLatLng([pos_east, pos_north] as PointExpression),
         type: m.type,
+        sensor: m.sensor,
+        config: m.config,
       };
     });
   };
@@ -179,10 +187,19 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data }) => {
     return sensorTypeConfig.find(s => s.type === 'default')!;
   };
 
+  useMapEvents({
+    zoom: () => {
+      setCurrentZoom(map.getZoom());
+      console.log('Zoom ', map.getZoom());
+    },
+  });
+
   const layerElement = (layer: any) => (
     <>
       {layer.type === 'WMSLayer' && (
         <WMSTileLayer
+          maxZoom={22}
+          maxNativeZoom={18}
           url={layer.serviceUrl}
           layers={layer.WMSLayers}
           opacity={layer.opacity != null ? layer.opacity : '1.0'}
@@ -194,6 +211,8 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data }) => {
       )}
       {layer.type === 'WMStiledLayer' && (
         <WMSTileLayer
+          maxZoom={22}
+          maxNativeZoom={18}
           url={layer.serviceUrl}
           layers={layer.WMSLayers}
           opacity={layer.opacity != null ? layer.opacity : '1.0'}
@@ -203,53 +222,27 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data }) => {
           tileSize={layer.tileSize != null ? layer.tileSize : 1024}
         />
       )}
-      {layer.type === 'tiledLayer' && <TileLayer url={layer.serviceUrl} />}
-      {layer.type === 'esriTiledMapLayer' && <EsriTiledMapLayer url={layer.serviceUrl} />}
-      {layer.type === 'esriDynamicMapLayer' && <EsriDynamicLayer url={layer.serviceUrl} />}
+      {layer.type === 'tiledLayer' && <TileLayer maxZoom={22} maxNativeZoom={18} url={layer.serviceUrl} />}
+      {layer.type === 'esriTiledMapLayer' && (
+        <EsriTiledMapLayer maxZoom={22} maxNativeZoom={18} url={layer.serviceUrl} />
+      )}
+      {layer.type === 'esriDynamicMapLayer' && (
+        <EsriDynamicLayer maxZoom={22} maxNativeZoom={18} url={layer.serviceUrl} />
+      )}
     </>
   );
-
   return (
     <>
       {mapMarkerGroups.map((markerGroup, i) => (
         <>
           <>
-            <CircleMarker
-              color={markerGroup.markers.length === 1 ? getSensorConfig(markerGroup.markers[0].type).color : 'green'}
-              radius={markerGroup.markers.length === 1 ? 10 : 20}
-              // eventHandlers={markerEventHandler}
-              eventHandlers={
-                markerGroup.markers.length === 1
-                  ? {}
-                  : {
-                      click: () => {
-                        // TODO: Move each markergroup to seperate component?
-                        const state = [...mapMarkerGroups];
-                        console.log('onclick');
-                        console.log(mapMarkerGroups[i]);
-                        state[i].toggleOpen = !mapMarkerGroups[i].toggleOpen;
-                        setMapMarkerGroups(state);
-                      },
-                    }
-              }
-              center={markerGroup.center}
-              // opacity={markerGroup.toggleOpen ? 0.2 : 1}
-              // className={markerGroup.toggleOpen ? "markergroup-active" : ""}
-              fillOpacity={markerGroup.markers.length === 1 ? 0.2 : 0.4}
-            >
-              {markerGroup.markers.length !== 1 && (
-                <Tooltip permanent={true} className="transparent" direction="center">
-                  <b>{markerGroup.markers.length}</b>
-                </Tooltip>
-              )}
-              {markerGroup.markers.length === 1 && <Popup>{markerGroup.center.toString()}</Popup>}
-              {showSensorNames && markerGroup.markers.length === 1 && (
-                <Tooltip permanent={true} direction="bottom">
-                  <b>{markerGroup.markers[0].name}</b>
-                </Tooltip>
-              )}
-              {/* <Popup>{markerGroup.center.toString()}</Popup> */}
-            </CircleMarker>
+          {markerGroup.markers.length === 1 &&
+            <SensorMarker marker={markerGroup.markers[0]} showSensorNames={showSensorNames}></SensorMarker>
+          }
+            {markerGroup.markers.length > 1 && (
+              <GroupMarker group={markerGroup} toggleOpen={(() => toggleOpen(i))}></GroupMarker>
+ 
+            )}
           </>
 
           {(markerGroup.toggleOpen ||
@@ -257,14 +250,7 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data }) => {
             <>
               {getSpreadMarkers(markerGroup).map(subMarker => (
                 <>
-                  <CircleMarker color={getSensorConfig(subMarker.type).color} center={subMarker.position}>
-                    {showSensorNames && (
-                      <Tooltip permanent={true} direction="bottom">
-                        <b>{subMarker.name}</b>
-                      </Tooltip>
-                    )}
-                    <Popup>{markerGroup.center.toString()}</Popup>
-                  </CircleMarker>
+                  <SensorMarker marker={subMarker} showSensorNames={showSensorNames}></SensorMarker>
                   <Polyline
                     interactive={false}
                     weight={1}
@@ -316,45 +302,3 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data }) => {
 };
 export { MapPanel };
 
-// return (
-//   <>
-//   {/* <MapContainer center={position} zoom={8} maxZoom={18} style={{ height: height, width: width }}> */}
-//     <ScaleControl position="bottomright" imperial={false} maxWidth={100}></ScaleControl>
-//     {/* <LayersControl ref={mapElement} position="bottomright">
-//       {layers
-//         .filter(l => l.isBaseMap)
-//         .map(layer => (
-//           <LayersControl.BaseLayer name={layer.name} checked={layer.isVisible}>
-//             {layerElement(layer)}
-//           </LayersControl.BaseLayer>
-//         ))}
-//       {layers
-//         .filter(l => !l.isBaseMap)
-//         .map(layer => (
-//           <LayersControl.Overlay name={layer.name} checked={layer.isVisible}>
-//             {layerElement(layer)}
-//           </LayersControl.Overlay>
-//         ))}
-//     </LayersControl>
-//     <LegendControl
-//       symbols={sensorTypeConfig.filter(ts =>
-//         sensors.find(s => (s.instrumentType ? s.instrumentType : 'default') === ts.type)
-//       )}
-//     ></LegendControl>
-//     <WMSLegendControl mapLayers={layers}></WMSLegendControl>  */}
-//    <MarkerCluster sensors={sensors} data={data}></MarkerCluster>
-//     {webcams.map(c => {
-//       return (
-//         <Marker icon={iconCamera} position={c.coord as [number, number]}>
-//           <Popup>
-//             <a href={c.webcamurl} target="_blank">
-//               <img src={c.webcamurl} width={200} />
-//             </a>
-//           </Popup>
-//         </Marker>
-//       );
-//     })}
-//   {/* </MapContainer> */}
-//   </>
-// );
-// };

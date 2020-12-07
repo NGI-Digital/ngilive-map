@@ -1,0 +1,1 @@
+zip -r ./tmp/ngilivemap.zip ../ngilive-map -x *.git* -x */*/node_modules/\* -x */*/releases/\* -x *.sh* -x notes.sh

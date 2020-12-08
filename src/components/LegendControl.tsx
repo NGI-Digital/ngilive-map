@@ -16,44 +16,43 @@ const LegendControl: React.FC<LegendControlProps> = ({ symbols }) => {
   const map = useMap();
   const [control, setControl] = useState<L.Control | null>(null);
 
-  function createContent() {
-    const jsx = (
-      <div className="rcorners1">
-        {symbols
-          .filter(s => s.showInLegend)
-          .map(s => {
-            return (
-              <>
-                <div>
-                  <span style={{ backgroundColor: s.color, width: '100px', height: '10px' }}>&nbsp;&nbsp;&nbsp;</span>
-                  <span style={{ color: '#000000', backgroundColor: '#FFFFFF' }}>&nbsp;{s.type}</span>
-                </div>
-              </>
-            );
-          })}
-      </div>
-    );
-
-    const div = L.DomUtil.create('div', '');
-    ReactDOM.render(jsx, div);
-    return div;
-  }
-
   // TODO: Fix
-  // useEffect(() => {
-  //   if (control) {
-  //     control.onAdd = map => {
-  //       return createContent();
-  //     };
+  useEffect(() => {
+    function createContent() {
+      const jsx = (
+        <div className="rcorners1">
+          {symbols
+            .filter(s => s.showInLegend)
+            .map(s => {
+              return (
+                <>
+                  <div>
+                    <span style={{ backgroundColor: s.color, width: '100px', height: '10px' }}>&nbsp;&nbsp;&nbsp;</span>
+                    <span style={{ color: '#000000', backgroundColor: '#FFFFFF' }}>&nbsp;{s.type}</span>
+                  </div>
+                </>
+              );
+            })}
+        </div>
+      );
 
-  //     control.onRemove = map => {};
+      const div = L.DomUtil.create('div', '');
+      ReactDOM.render(jsx, div);
+      return div;
+    }
+    if (control) {
+      control.onAdd = map => {
+        return createContent();
+      };
 
-  //     if (control) {
-  //       map.removeControl(control);
-  //     }
-  //     control.addTo(map);
-  //   }
-  // }, [symbols, control, map, createContent]);
+      control.onRemove = map => {};
+
+      if (control) {
+        map.removeControl(control);
+      }
+      control.addTo(map);
+    }
+  });
 
   useEffect(() => {
     const c = new L.Control({ position: 'topright' });

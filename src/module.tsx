@@ -31,6 +31,12 @@ export const plugin = new PanelPlugin<MapEditorFunctionProps>(Map).setPanelOptio
       category: ['NGI Map'],
       defaultValue: false,
     })
+    .addBooleanSwitch({
+      name: 'Enable sensor names',
+      path: 'useSensorNames',
+      category: ['NGI Map'],
+      defaultValue: false,
+    })
     .addCustomEditor({
       id: 'layers',
       path: 'layers',

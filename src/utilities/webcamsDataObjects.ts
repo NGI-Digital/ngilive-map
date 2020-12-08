@@ -1,3 +1,4 @@
+import { DataFrame, PanelData } from '@grafana/data';
 import { webcam } from 'types/webcam';
 //import { FilterFieldsByNameTransformerOptions } from '@grafana/data';
 
@@ -15,11 +16,9 @@ function getFieldIndex(fieldName: string, fieldsArray: any) {
   return -1;
 }
 
-const extractWebcamsFromGrafanaStream = (data: any): webcam[] => {
-  //console.log('dataobject:', data);
-  const ws = data.series[2];
-  // Require a query B with two field instrument_id and last_value
-  const len = ws.fields[0].values.buffer.length;
+const extractWebcamsFromGrafanaStream = (data: PanelData): webcam[] => {
+  const ws = data.series.find(s => s.refId === 'C') as DataFrame;
+  const len = ws.fields[0].values.length;
   const returnArray: webcam[] = [];
 
   //field indexes for main query (A)
@@ -33,14 +32,14 @@ const extractWebcamsFromGrafanaStream = (data: any): webcam[] => {
   //console.log("colonPos['name']", colonPos['name']);
 
   for (let i = 0; i < len; i++) {
-    if (ws.fields[1].values.buffer[i] === 0 || ws.fields[2].values.buffer[i] === 0) {
+    if (ws.fields[1].values.get(i) === 0 || ws.fields[2].values.get(i) === 0) {
       continue;
     }
     const wc: webcam = {
-      name: ws.fields[colonPos['name']].values.buffer[i],
-      coord: [ws.fields[colonPos['east']].values.buffer[i], ws.fields[colonPos['north']].values.buffer[i]],
-      coordSystem: ws.fields[colonPos['coordinate_system']].values.buffer[i],
-      webcamurl: ws.fields[colonPos['webcamurl']].values.buffer[i],
+      name: ws.fields[colonPos['name']].values.get(i),
+      coord: [ws.fields[colonPos['east']].values.get(i), ws.fields[colonPos['north']].values.get(i)],
+      coordSystem: ws.fields[colonPos['coordinate_system']].values.get(i),
+      webcamurl: ws.fields[colonPos['webcamurl']].values.get(i),
     };
 
     returnArray.push(wc);

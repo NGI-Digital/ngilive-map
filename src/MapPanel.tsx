@@ -6,10 +6,9 @@ import {
   LayersControl,
   WMSTileLayer,
   useMap,
-  CircleMarker,
-  Tooltip,
   Polyline,
   useMapEvents,
+  ScaleControl,
 } from 'react-leaflet';
 import proj4 from 'proj4';
 import projectAndRemapLocObject from 'utilities/locObjectProjecteorAndMapper';
@@ -35,10 +34,12 @@ import { iconCamera } from 'utilities/defineIcons';
 import { sensorConfig } from 'types/sensorConfig';
 import { SensorMarker } from 'SensorMarker';
 import { GroupMarker } from 'GroupMarker';
+import MapHtmlOverlay from 'MapHtmlOverlay';
+import { PanelData } from '@grafana/data';
 
 type MapPanelProps = {
   options: any;
-  data: any;
+  data: PanelData;
 };
 
 export type MapMarker = {
@@ -55,30 +56,14 @@ export type MapMarkerGroup = {
   toggleOpen: boolean | undefined;
 };
 
-const buttonStyle = {
-  color: 'black',
-  backgroundColor: 'lightgrey',
-  fontSize: 'small',
-  padding: '0px 3px',
-};
-const grafPopupStyle = {
-  width: '500px',
-  height: '300px',
-};
-
-const grafStye = {
-  width: '300px',
-  height: '200px',
-};
-
 const MapPanel: React.FC<MapPanelProps> = ({ options, data }) => {
-  const showSensorNames = false;
   const map = useMap();
   const [mapMarkerGroups, setMapMarkerGroups] = useState<MapMarkerGroup[]>([]);
   const [webcams, setWebcams] = useState<webcam[]>([]);
   const [sensors, setSensors] = useState<Sensor[]>([]);
   const [layers, setLayers] = useState<mapLayer[]>([]);
   const [currentZoom, setCurrentZoom] = useState<number>(map.getZoom());
+  const [showSensorNames, setShowSensorNames] = useState(false);
 
   useEffect(() => {
     proj4.defs(defineProjectionZones());
@@ -138,6 +123,7 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data }) => {
         [sensorsExtent.minX, sensorsExtent.minY],
         [sensorsExtent.maxX, sensorsExtent.maxY],
       ]);
+      // Close all open groups to prevent insane everything open map - detect bounds change?
     }
   }, [data, map, options.enableWebCams, options.useMockData]);
 
@@ -145,7 +131,7 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data }) => {
     const state = [...mapMarkerGroups];
     state[index].toggleOpen = !mapMarkerGroups[index].toggleOpen;
     setMapMarkerGroups(state);
-  }
+  };
 
   const getSpreadMarkers = (markerGroup: MapMarkerGroup): MapMarker[] => {
     const center = map.latLngToLayerPoint(markerGroup.center);
@@ -236,12 +222,15 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data }) => {
       {mapMarkerGroups.map((markerGroup, i) => (
         <>
           <>
-          {markerGroup.markers.length === 1 &&
-            <SensorMarker marker={markerGroup.markers[0]} showSensorNames={showSensorNames}></SensorMarker>
-          }
+            {markerGroup.markers.length === 1 && (
+              <SensorMarker
+                data={data}
+                marker={markerGroup.markers[0]}
+                showSensorNames={showSensorNames}
+              ></SensorMarker>
+            )}
             {markerGroup.markers.length > 1 && (
-              <GroupMarker group={markerGroup} toggleOpen={(() => toggleOpen(i))}></GroupMarker>
- 
+              <GroupMarker group={markerGroup} toggleOpen={() => toggleOpen(i)}></GroupMarker>
             )}
           </>
 
@@ -250,7 +239,7 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data }) => {
             <>
               {getSpreadMarkers(markerGroup).map(subMarker => (
                 <>
-                  <SensorMarker marker={subMarker} showSensorNames={showSensorNames}></SensorMarker>
+                  <SensorMarker marker={subMarker} data={data} showSensorNames={showSensorNames}></SensorMarker>
                   <Polyline
                     interactive={false}
                     weight={1}
@@ -296,9 +285,11 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data }) => {
           </Marker>
         );
       })}
-      {/* <ScaleControl position="bottomright" imperial={false} maxWidth={100}></ScaleControl> */}
+      <ScaleControl position="bottomright" imperial={false} maxWidth={100}></ScaleControl>
+      {options.useSensorNames && (
+        <MapHtmlOverlay showSensorNames={showSensorNames} setShowSensorNames={setShowSensorNames}></MapHtmlOverlay>
+      )}
     </>
   );
 };
 export { MapPanel };
-

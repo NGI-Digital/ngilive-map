@@ -1,16 +1,18 @@
 import { getColorFromHexRgbOrName } from '@grafana/data';
 import { sensorTypeConfig } from 'data/defualtSensorConfig';
 import { MapMarker } from 'MapPanel';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { CircleMarker, Popup, Tooltip } from 'react-leaflet';
 import { sensorConfig } from 'types/sensorConfig';
 import { Line } from 'react-chartjs-2';
 import { getDateTimeFromTimestamp } from 'utilities/utils';
 import { Sensor } from 'types/sensor';
+import getTimeSerialFromGrafanaStream from 'utilities/sensorTimeSeries';
 
 type SensorMarkerProps = {
   marker: MapMarker;
   showSensorNames: boolean;
+  data: any;
 };
 
 const grafPopupStyle = {
@@ -46,7 +48,7 @@ function exportToCsv(event: React.MouseEvent, s: Sensor) {
     const values = s.timeSerial.values;
     const timestamps = s.timeSerial.timestamps;
     for (var i = 0; i < values.length; i++) {
-      csvFile += getDateTimeFromTimestamp(timestamps[i]) + ';' + values[i].toFixed(3) + '\n';
+      csvFile += getDateTimeFromTimestamp(timestamps[i]) + ';' + values[i] + '\n';
     }
 
     var blob = new Blob([csvFile], { type: 'text/csv;charset=utf-8;' });
@@ -70,7 +72,7 @@ function exportToCsv(event: React.MouseEvent, s: Sensor) {
   }
 }
 
-export const SensorMarker: React.FC<SensorMarkerProps> = ({ marker, showSensorNames }) => {
+export const SensorMarker: React.FC<SensorMarkerProps> = ({ marker, showSensorNames, data }) => {
   const config = getSensorConfig(marker.type);
 
   var data2 = {
@@ -109,16 +111,41 @@ export const SensorMarker: React.FC<SensorMarkerProps> = ({ marker, showSensorNa
           time: {
             tooltipFormat: 'YYYY-MM-DD HH:mm',
             displayFormats: {
-              day: 'YYYY-D/MM',
-              second: 'HH:mm:ss',
-              minute: 'HH:mm',
-              hour: 'D/MM HH',
+              day: 'YYYY-MM-DD',
+              month: 'YYYY-MM-DD',
+              // second: 'HH:mm:ss',
+              // minute: 'HH:mm',
+              hour: 'MM-DD HH:mm',
             },
           },
         },
       ],
     },
   };
+
+  useEffect(() => {
+    if (data) {
+      if (marker.sensor.timeSerial == null) {
+        marker.sensor.timeSerial = getTimeSerialFromGrafanaStream(data, marker.sensor.name);
+      }
+    }
+
+    data2.labels =
+      marker.sensor.timeSerial === null || marker.sensor.timeSerial === undefined
+        ? ([] as number[])
+        : (marker.sensor.timeSerial.timestamps as number[]);
+    data2.datasets[0].data =
+      marker.sensor.timeSerial === null || marker.sensor.timeSerial === undefined
+        ? ([] as number[])
+        : marker.sensor.timeSerial.values;
+    data2.datasets[0].label =
+      marker.sensor.timeSerial === null || marker.sensor.timeSerial === undefined
+        ? ''
+        : marker.sensor.instrumentType + '[' + marker.sensor.unit + ']';
+
+    if (data2.datasets[0].data.length > 0) {
+    }
+  }, [marker, data, data2]);
 
   return (
     <>

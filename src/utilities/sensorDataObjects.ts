@@ -1,6 +1,5 @@
+import { DataFrame, PanelData } from '@grafana/data';
 import { Sensor } from 'types/sensor';
-import getTimeSerialFromGrafanaStream from './sensorTimeSeries';
-//import { FilterFieldsByNameTransformerOptions } from '@grafana/data';
 
 export interface FieldsPosHash {
   [fieldName: string]: number;
@@ -32,18 +31,18 @@ function getLastValueForInstrumentID(
     }
   }
 
-  //console.log("rowNr", rowNr);
   let retValue: number;
   retValue = dataArray.fields[lastValueFieldIndex].values.buffer[rowNr];
   return retValue;
 }
 
-const extractSensorsFromGrafanaStream = (data: any): Sensor[] => {
-  //console.log('dataobject:', data);
-  const s = data.series[0];
+const extractSensorsFromGrafanaStream = (data: PanelData): Sensor[] => {
+
+  // const s = data.series[0];
+  const samples = data.series.find(s => s.refId === 'A') as DataFrame;
   // Require a query B with two field instrument_id and last_value
-  const lastValues = data.series[1];
-  const len = s.fields[0].values.buffer.length;
+  const lastValues = data.series.find(s => s.refId === 'B') as DataFrame;
+  const len = samples.fields[0].values.length; // buffer.length;
   const returnArray: Sensor[] = [];
 
   //field indexes for main query (A)
@@ -63,7 +62,7 @@ const extractSensorsFromGrafanaStream = (data: any): Sensor[] => {
     'depth',
   ];
   colons.forEach((element: string) => {
-    colonPos[element] = getFieldIndex(element, s.fields);
+    colonPos[element] = getFieldIndex(element, samples.fields);
   });
 
   //console.log('positions', colonPos);
@@ -74,25 +73,24 @@ const extractSensorsFromGrafanaStream = (data: any): Sensor[] => {
   const lastValueFieldIndexQRYB = getFieldIndex('last_value', lastValues.fields);
 
   for (let i = 0; i < len; i++) {
-    if (s.fields[1].values.buffer[i] === 0 || s.fields[2].values.buffer[i] === 0) {
+    if (samples.fields[1].values.get(i) === 0 || samples.fields[2].values.get(i) === 0) {
       continue;
     }
 
     const us: Sensor = {
-      name: s.fields[colonPos['instrument_name']].values.buffer[i],
-      id: s.fields[colonPos['instrument_id']].values.buffer[i],
-      coord: [s.fields[colonPos['xpos']].values.buffer[i], s.fields[colonPos['ypos']].values.buffer[i]],
-      coordSystem: s.fields[colonPos['coordinate_system']].values.buffer[i],
-      depth: s.fields[colonPos['depth']].values.buffer[i],
-      unit: s.fields[colonPos['unit']].values.buffer[i],
-      min: s.fields[colonPos['min']].values.buffer[i],
-      max: s.fields[colonPos['max']].values.buffer[i],
-      mean: s.fields[colonPos['avg']].values.buffer[i],
-      instrumentType: s.fields[colonPos['instrument_type']].values.buffer[i],
-      //timeSerial: getTimeSerialFromGrafanaStream(data, s.fields[colonPos['instrument_name']].values.buffer[i]),
+      name: samples.fields[colonPos['instrument_name']].values.get(i),
+      id: samples.fields[colonPos['instrument_id']].values.get(i),
+      coord: [samples.fields[colonPos['xpos']].values.get(i), samples.fields[colonPos['ypos']].values.get(i)],
+      coordSystem: samples.fields[colonPos['coordinate_system']].values.get(i),
+      depth: samples.fields[colonPos['depth']].values.get(i),
+      unit: samples.fields[colonPos['unit']].values.get(i),
+      min: samples.fields[colonPos['min']].values.get(i),
+      max: samples.fields[colonPos['max']].values.get(i),
+      mean: samples.fields[colonPos['avg']].values.get(i),
+      instrumentType: samples.fields[colonPos['instrument_type']].values.get(i),
     };
     const lastValue: number = getLastValueForInstrumentID(
-      s.fields[colonPos['instrument_id']].values.buffer[i],
+      samples.fields[colonPos['instrument_id']].values.get(i),
       lastValues,
       instrumentIdFieldIndexQRYB,
       lastValueFieldIndexQRYB

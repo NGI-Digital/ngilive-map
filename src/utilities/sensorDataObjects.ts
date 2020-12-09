@@ -37,7 +37,6 @@ function getLastValueForInstrumentID(
 }
 
 const extractSensorsFromGrafanaStream = (data: PanelData): Sensor[] => {
-
   // const s = data.series[0];
   const samples = data.series.find(s => s.refId === 'A') as DataFrame;
   // Require a query B with two field instrument_id and last_value

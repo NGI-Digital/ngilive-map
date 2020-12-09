@@ -40,6 +40,7 @@ import { PanelData } from '@grafana/data';
 type MapPanelProps = {
   options: any;
   data: PanelData;
+  sensors: Sensor[];
 };
 
 export type MapMarker = {
@@ -56,14 +57,16 @@ export type MapMarkerGroup = {
   toggleOpen: boolean | undefined;
 };
 
-const MapPanel: React.FC<MapPanelProps> = ({ options, data }) => {
+const MapPanel: React.FC<MapPanelProps> = ({ options, data, sensors }) => {
   const map = useMap();
   const [mapMarkerGroups, setMapMarkerGroups] = useState<MapMarkerGroup[]>([]);
   const [webcams, setWebcams] = useState<webcam[]>([]);
-  const [sensors, setSensors] = useState<Sensor[]>([]);
+  // const [sensors, setSensors] = useState<Sensor[]>([]);
   const [layers, setLayers] = useState<mapLayer[]>([]);
   const [currentZoom, setCurrentZoom] = useState<number>(map.getZoom());
   const [showSensorNames, setShowSensorNames] = useState(false);
+
+  const expandAtZoomLevel = 17;
 
   useEffect(() => {
     proj4.defs(defineProjectionZones());
@@ -78,13 +81,13 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data }) => {
   useEffect(() => {
     console.log('updated');
     //console.log(options);
-    const unConvSensors = options.useMockData ? mockSensors : extractSensorsFromGrafanaStream(data);
-    console.log({ unConvSensors });
-    const mapSensors: Sensor[] = unConvSensors
-      .map(element => projectAndRemapLocObject(element) as Sensor)
-      .filter(s => s.coord[0] > 1 && s.coord[1] > 1);
-    const sensorsExtent: envelope = getSensorsExtent(mapSensors);
-    setSensors(mapSensors);
+    // const unConvSensors = options.useMockData ? mockSensors : extractSensorsFromGrafanaStream(data);
+    // console.log({ unConvSensors });
+    // const mapSensors: Sensor[] = unConvSensors
+    //   .map(element => projectAndRemapLocObject(element) as Sensor)
+    //   .filter(s => s.coord[0] > 1 && s.coord[1] > 1);
+    const sensorsExtent: envelope = getSensorsExtent(sensors);
+    // setSensors(mapSensors);
 
     // get webcams
     if (options.enableWebCams) {
@@ -93,9 +96,11 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data }) => {
       setWebcams(mapWebcams);
     }
 
-    if (mapSensors) {
+    if (sensors) {
+      console.log('sensors ja');
+      console.log({ sensors });
       const mGroups = [] as MapMarkerGroup[];
-      mapSensors.forEach(s => {
+      sensors.forEach(s => {
         const pos = s.coord as LatLngExpression;
         const existingGroup = mGroups.find(m => m.center[0] === pos[0] && m.center[1] === pos[1]);
         const sensorToPush = {
@@ -118,18 +123,26 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data }) => {
       setMapMarkerGroups(mGroups);
     }
 
-    if (mapSensors.length > 0) {
+    if (sensors.length > 0) {
       map.fitBounds([
         [sensorsExtent.minX, sensorsExtent.minY],
         [sensorsExtent.maxX, sensorsExtent.maxY],
       ]);
       // Close all open groups to prevent insane everything open map - detect bounds change?
     }
-  }, [data, map, options.enableWebCams, options.useMockData]);
+  }, [data, map, options.enableWebCams, sensors, options.useMockData]);
 
   const toggleOpen = (index: number) => {
     const state = [...mapMarkerGroups];
-    state[index].toggleOpen = !mapMarkerGroups[index].toggleOpen;
+
+    const isOpen = mapMarkerGroups[index].toggleOpen;
+
+    // You probably mean to close the element
+    if (currentZoom > expandAtZoomLevel && isOpen === undefined) {
+      state[index].toggleOpen = false;
+    } else {
+      state[index].toggleOpen = !mapMarkerGroups[index].toggleOpen;
+    }
     setMapMarkerGroups(state);
   };
 
@@ -146,22 +159,24 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data }) => {
     const angleStep = (Math.PI * 2) / (numberOfSensors > 2 ? numberOfSensors : 5);
     let iteration = 0;
 
-    return markerGroup.markers.map(m => {
-      iteration += 1;
-      const angle = iteration * angleStep;
-      const center_east = center.x;
-      const center_north = center.y;
-      const pos_east = center_east + legLength * Math.cos(angle);
-      const pos_north = center_north + legLength * Math.sin(angle);
+    return markerGroup.markers
+      .map(m => {
+        iteration += 1;
+        const angle = iteration * angleStep;
+        const center_east = center.x;
+        const center_north = center.y;
+        const pos_east = center_east + legLength * Math.cos(angle);
+        const pos_north = center_north + legLength * Math.sin(angle);
 
-      return {
-        name: m.name,
-        position: map.layerPointToLatLng([pos_east, pos_north] as PointExpression),
-        type: m.type,
-        sensor: m.sensor,
-        config: m.config,
-      };
-    });
+        return {
+          name: m.name,
+          position: map.layerPointToLatLng([pos_east, pos_north] as PointExpression),
+          type: m.type ?? '',
+          sensor: m.sensor,
+          config: m.config,
+        };
+      })
+      .sort((a, b) => a.type.localeCompare(b.type));
   };
 
   const getSensorConfig = (type: string): sensorConfig => {
@@ -219,11 +234,16 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data }) => {
   );
   return (
     <>
+      <ScaleControl position="bottomright" imperial={false} maxWidth={100}></ScaleControl>
+      {options.useSensorNames && (
+        <MapHtmlOverlay showSensorNames={showSensorNames} setShowSensorNames={setShowSensorNames}></MapHtmlOverlay>
+      )}
       {mapMarkerGroups.map((markerGroup, i) => (
         <>
           <>
             {markerGroup.markers.length === 1 && (
               <SensorMarker
+                options={options}
                 data={data}
                 marker={markerGroup.markers[0]}
                 showSensorNames={showSensorNames}
@@ -235,11 +255,18 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data }) => {
           </>
 
           {(markerGroup.toggleOpen ||
-            (markerGroup.toggleOpen !== false && currentZoom > 17 && markerGroup.markers.length > 1)) && (
+            (markerGroup.toggleOpen !== false &&
+              currentZoom > expandAtZoomLevel &&
+              markerGroup.markers.length > 1)) && (
             <>
               {getSpreadMarkers(markerGroup).map(subMarker => (
                 <>
-                  <SensorMarker marker={subMarker} data={data} showSensorNames={showSensorNames}></SensorMarker>
+                  <SensorMarker
+                    options={options}
+                    marker={subMarker}
+                    data={data}
+                    showSensorNames={showSensorNames}
+                  ></SensorMarker>
                   <Polyline
                     interactive={false}
                     weight={1}
@@ -285,10 +312,6 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data }) => {
           </Marker>
         );
       })}
-      <ScaleControl position="bottomright" imperial={false} maxWidth={100}></ScaleControl>
-      {options.useSensorNames && (
-        <MapHtmlOverlay showSensorNames={showSensorNames} setShowSensorNames={setShowSensorNames}></MapHtmlOverlay>
-      )}
     </>
   );
 };

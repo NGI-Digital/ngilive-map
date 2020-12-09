@@ -1,7 +1,7 @@
 import { getColorFromHexRgbOrName } from '@grafana/data';
 import { sensorTypeConfig } from 'data/defualtSensorConfig';
 import { MapMarker } from 'MapPanel';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { CircleMarker, Popup, Tooltip } from 'react-leaflet';
 import { sensorConfig } from 'types/sensorConfig';
 import { Line } from 'react-chartjs-2';
@@ -13,11 +13,12 @@ type SensorMarkerProps = {
   marker: MapMarker;
   showSensorNames: boolean;
   data: any;
+  options: any;
 };
 
 const grafPopupStyle = {
-  width: '500px',
-  height: '300px',
+  maxWidth: '500px',
+  maxHeight: '300px',
 };
 
 const grafStye = {
@@ -31,6 +32,8 @@ const buttonStyle = {
   fontSize: 'small',
   padding: '0px 3px',
 };
+
+const average = (array: number[]) => array.reduce((a, b) => a + b) / array.length;
 
 const getSensorConfig = (type: string): sensorConfig => {
   const currentConfig = sensorTypeConfig.find(s => s.type === type);
@@ -72,15 +75,19 @@ function exportToCsv(event: React.MouseEvent, s: Sensor) {
   }
 }
 
-export const SensorMarker: React.FC<SensorMarkerProps> = ({ marker, showSensorNames, data }) => {
+export const SensorMarker: React.FC<SensorMarkerProps> = ({ marker, showSensorNames, data, options }) => {
   const config = getSensorConfig(marker.type);
+  const [currentMarker, setCurrentMarker] = useState<MapMarker>(marker);
+  const [timeseries, setTimeseries] = useState<MapMarker>(marker);
+  const [datapoints, setDataPoints] = useState<number[]>([]);
+  const [datapointLabels, setDatapointLabels] = useState<number[]>([]);
 
-  var data2 = {
-    labels: [] as number[],
+  var timeseries_data = {
+    labels: datapointLabels,
     datasets: [
       {
         label: '',
-        data: [] as number[],
+        data: datapoints,
         backgroundColor: getColorFromHexRgbOrName('blue'),
         fill: false,
         pointBackgroundColor: getColorFromHexRgbOrName(config.color),
@@ -90,7 +97,7 @@ export const SensorMarker: React.FC<SensorMarkerProps> = ({ marker, showSensorNa
     ],
   };
 
-  var options = {
+  var graphOptions = {
     title: {
       display: false,
       text: 'Custom Chart Title',
@@ -123,33 +130,57 @@ export const SensorMarker: React.FC<SensorMarkerProps> = ({ marker, showSensorNa
     },
   };
 
-  useEffect(() => {
+  const getPopupValues = (marker: MapMarker) => {
+    console.log('getpopupvalues');
     if (data) {
-      if (marker.sensor.timeSerial == null) {
-        marker.sensor.timeSerial = getTimeSerialFromGrafanaStream(data, marker.sensor.name);
+      if (!options.useLegacyQuery) {
+        const timeserial = getTimeSerialFromGrafanaStream(data, marker.sensor.name, options);
+        marker.sensor.timeSerial = timeserial;
+        if (timeserial?.values.length > 0) {
+          console.log('setting from ', timeserial);
+          marker.sensor.max = +Math.max(...timeserial.values).toFixed(3);
+          marker.sensor.min = +Math.min(...timeserial.values).toFixed(3);
+          marker.sensor.mean = +average(timeserial.values).toFixed(3);
+          console.log(marker);
+        }
       }
-    }
+      // timeseries_data.labels =
+      //   marker.sensor.timeSerial === null || marker.sensor.timeSerial === undefined
+      //     ? ([] as number[])
+      //     : (marker.sensor.timeSerial.timestamps as number[]);
+      const extractedDataPoints = marker.sensor.timeSerial?.values ?? [];
+      const extractedDataPointLabels = marker.sensor.timeSerial?.timestamps as number[];
+      console.log({ extractedDataPoints });
+      console.log({ extractedDataPointLabels });
+      setDataPoints(extractedDataPoints);
+      setDatapointLabels(extractedDataPointLabels);
 
-    data2.labels =
-      marker.sensor.timeSerial === null || marker.sensor.timeSerial === undefined
-        ? ([] as number[])
-        : (marker.sensor.timeSerial.timestamps as number[]);
-    data2.datasets[0].data =
-      marker.sensor.timeSerial === null || marker.sensor.timeSerial === undefined
-        ? ([] as number[])
-        : marker.sensor.timeSerial.values;
-    data2.datasets[0].label =
-      marker.sensor.timeSerial === null || marker.sensor.timeSerial === undefined
-        ? ''
-        : marker.sensor.instrumentType + '[' + marker.sensor.unit + ']';
-
-    if (data2.datasets[0].data.length > 0) {
+      // timeseries_data.datasets[0].data =
+      //   marker.sensor.timeSerial === null || marker.sensor.timeSerial === undefined
+      //     ? ([] as number[])
+      //     : marker.sensor.timeSerial.values;
+      // timeseries_data.datasets[0].label =
+      //   marker.sensor.timeSerial === null || marker.sensor.timeSerial === undefined
+      //     ? ''
+      //     : marker.sensor.instrumentType + '[' + marker.sensor.unit + ']';
+      console.log(marker);
+      setCurrentMarker({ ...marker });
     }
-  }, [marker, data, data2]);
+  };
+
+  useEffect(() => {}, [marker, data, timeseries_data, options]);
 
   return (
     <>
-      <CircleMarker color={config.color} center={marker.position}>
+      <CircleMarker
+        eventHandlers={{
+          click: () => {
+            getPopupValues(marker);
+          },
+        }}
+        color={config.color}
+        center={marker.position}
+      >
         {showSensorNames && (
           <Tooltip permanent={true} direction="bottom">
             <b>{marker.name}</b>
@@ -158,13 +189,13 @@ export const SensorMarker: React.FC<SensorMarkerProps> = ({ marker, showSensorNa
         <Popup>
           {' '}
           <div style={grafPopupStyle}>
-            <b>{marker.name}</b>
+            <b>{currentMarker.name}</b>
             <br />
-            {marker.type} [{marker.sensor.unit}]
+            {currentMarker.type} [{currentMarker.sensor.unit}]
             {config.showDepth && (
               <>
                 <br />
-                <span>Depth: {marker.sensor.depth}</span>
+                <span>Depth: {currentMarker.sensor.depth}</span>
               </>
             )}
             <br />
@@ -172,30 +203,30 @@ export const SensorMarker: React.FC<SensorMarkerProps> = ({ marker, showSensorNa
             <table>
               <tr>
                 <td>Last value:</td>
-                <td>{marker.sensor.lastValue}</td>
+                <td>{currentMarker.sensor.lastValue}</td>
                 <td style={{ textAlign: 'center', verticalAlign: 'middle', width: '150px' }} rowSpan={4}>
-                  <button style={buttonStyle} onClick={(e): void => exportToCsv(e, marker.sensor)}>
+                  <button style={buttonStyle} onClick={(e): void => exportToCsv(e, currentMarker.sensor)}>
                     Last ned data
                   </button>
                 </td>
               </tr>
               <tr>
                 <td>Max:</td>
-                <td>{marker.sensor.max}</td>
+                <td>{currentMarker.sensor.max}</td>
               </tr>
               <tr>
                 <td>Min:</td>
-                <td>{marker.sensor.min}</td>
+                <td>{currentMarker.sensor.min}</td>
               </tr>
               <tr>
                 <td>Mean:</td>
-                <td>{marker.sensor.mean}</td>
+                <td>{currentMarker.sensor.mean}</td>
               </tr>
             </table>
             <br />
             {config.showPlot && (
               <div style={grafStye}>
-                <Line data={data2} options={options}></Line>
+                <Line data={timeseries_data} options={graphOptions}></Line>
               </div>
             )}
           </div>

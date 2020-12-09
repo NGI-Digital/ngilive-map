@@ -37,6 +37,12 @@ export const plugin = new PanelPlugin<MapEditorFunctionProps>(Map).setPanelOptio
       category: ['NGI Map'],
       defaultValue: false,
     })
+    .addBooleanSwitch({
+      name: 'Legacy query support',
+      path: 'useLegacyQuery',
+      category: ['NGI Map'],
+      defaultValue: true,
+    })
     .addCustomEditor({
       id: 'layers',
       path: 'layers',

@@ -5,28 +5,20 @@ import { Tooltip } from 'react-leaflet';
 
 type GroupMarkerProps = {
   group: MapMarkerGroup;
-  toggleOpen: any
+  toggleOpen: any;
 };
 
 export const GroupMarker: React.FC<GroupMarkerProps> = ({ group, toggleOpen }) => {
-
-    const [open, setOpen] = useState(false)
-
   return (
     <CircleMarker
       color={'green'}
       radius={20}
       eventHandlers={{
         click: () => {
-        //   const state = [...mapMarkerGroups];
-        //   state[i].toggleOpen = !mapMarkerGroups[i].toggleOpen;
-        //   setMapMarkerGroups(!open);
-        toggleOpen()
+          toggleOpen();
         },
       }}
       center={group.center}
-      // opacity={markerGroup.toggleOpen ? 0.2 : 1}
-      // className={markerGroup.toggleOpen ? "markergroup-active" : ""}
       fillOpacity={0.4}
     >
       <Tooltip permanent={true} className="transparent" direction="center">

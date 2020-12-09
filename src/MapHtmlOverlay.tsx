@@ -16,7 +16,7 @@ const MapHtmlOverlay: React.FC<MapHtmlOverlayProps> = ({ showSensorNames, setSho
   useEffect(() => {
     function createContent() {
       const jsx = (
-        <div className="rcorners1">
+        <div>
           <>
             <div style={{ backgroundColor: 'white', padding: '1em', borderRadius: '1em' }}>
               <input
@@ -26,7 +26,7 @@ const MapHtmlOverlay: React.FC<MapHtmlOverlayProps> = ({ showSensorNames, setSho
                 type="checkbox"
                 title="Show sensor names"
               ></input>
-              <label htmlFor="showNames">&nbsp;Show sensor names</label>
+              <label htmlFor="showNames">&nbsp;Sensor names</label>
             </div>
           </>
         </div>
@@ -41,15 +41,12 @@ const MapHtmlOverlay: React.FC<MapHtmlOverlayProps> = ({ showSensorNames, setSho
         return createContent();
       };
 
-      //   if (control) {
-      //     map.removeControl(control);
-      //   }
       control.addTo(map);
     }
   });
 
   useEffect(() => {
-    const c = new L.Control({ position: 'bottomright' });
+    const c = new L.Control({ position: 'bottomleft' });
     setControl(c);
   }, []);
 

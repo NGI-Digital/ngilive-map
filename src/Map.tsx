@@ -6,16 +6,18 @@ import { MapPanel } from 'MapPanel';
 import L from 'leaflet';
 import { mockSensors } from 'data/mockSensors';
 import extractSensorsFromGrafanaStream from 'utilities/sensorDataObjects';
-import projectAndRemapLocObject from 'utilities/locObjectProjecteorAndMapper';
 import { Sensor } from 'types/sensor';
 import proj4 from 'proj4';
-import defineProjectionZones from 'utilities/defineProjectionZones';
 import { getSensorQueryErrors } from 'utilities/queryValidator';
-import { extractSensors } from 'utilities/dataFrameExtractor';
+import extractWebcams, { extractSensors } from 'utilities/dataFrameExtractor';
+import { defineProjectionZones, projectAndRemapLocObject } from 'utilities/projection';
+import { mockWebcams } from 'data/mockWebcams';
+import { Webcam } from 'types/webcam';
 
 const Map: React.FC<PanelProps> = ({ options, data, height, width }) => {
   const [sensors, setSensors] = useState<Sensor[]>([]);
   const [sensorQueryErrors, setSensorQueryErrors] = useState<string[]>([]);
+  const [webcams, setWebcams] = useState<Webcam[]>([]);
 
   useEffect(() => {
     proj4.defs(defineProjectionZones());
@@ -36,13 +38,21 @@ const Map: React.FC<PanelProps> = ({ options, data, height, width }) => {
       setSensors(mapped);
     } else {
       const sensorDataFrame = data.series.find(s => s.refId === 'A') as DataFrame;
-      setSensorQueryErrors(getSensorQueryErrors(sensorDataFrame));
-      if (sensorQueryErrors.length > 0) {
+      const errors = getSensorQueryErrors(sensorDataFrame);
+      setSensorQueryErrors(errors);
+      if (errors.length > 0) {
         return;
       }
       setSensors(extractSensors(sensorDataFrame));
     }
-  }, [data, options.useMockData, options.useLegacyQuery]);
+
+    if (options.enableWebCams) {
+      const webcamDataFrame = data.series.find(s => s.refId === 'C') as DataFrame;
+      const unConvWebcams = options.useMockData ? mockWebcams : extractWebcams(webcamDataFrame);
+      const mapWebcams: Webcam[] = unConvWebcams.map(element => projectAndRemapLocObject(element) as Webcam);
+      setWebcams(mapWebcams);
+    }
+  }, [data, options.useMockData, options.useLegacyQuery, options.enableWebCams]);
 
   if (sensorQueryErrors.length > 0) {
     return (
@@ -64,7 +74,7 @@ const Map: React.FC<PanelProps> = ({ options, data, height, width }) => {
         maxZoom={22}
         style={{ height: height, width: width }}
       >
-        <MapPanel options={options} sensors={sensors} data={data}></MapPanel>
+        <MapPanel options={options} sensors={sensors} webcams={webcams} data={data}></MapPanel>
       </MapContainer>
     </>
   );

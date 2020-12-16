@@ -10,21 +10,17 @@ import {
   useMapEvents,
   ScaleControl,
 } from 'react-leaflet';
-import projectAndRemapLocObject from 'utilities/locObjectProjecteorAndMapper';
 import { mapLayer } from 'types/mapLayer';
 import { mockLayers } from 'data/mockLayers';
 import EsriTiledMapLayer from 'components/EsriTiledMapLayer';
 import EsriDynamicLayer from 'components/EsriDynamicLayer';
 import { Sensor } from 'types/sensor';
-import { mockWebcams } from 'data/mockWebcams';
 import { BoundsLiteral, LatLngExpression, PointExpression } from 'leaflet';
 import { getSensorBounds } from 'utilities/utils';
 import { sensorTypeConfig } from 'data/defualtSensorConfig';
 import LegendControl from 'components/LegendControl';
 import WMSLegendControl from 'components/WMSLegendControl';
 import 'leaflet/dist/leaflet.css';
-import { webcam } from 'types/webcam';
-import extractWebcamsFromGrafanaStream from 'utilities/webcamsDataObjects';
 import { iconCamera } from 'utilities/defineIcons';
 import { sensorConfig } from 'types/sensorConfig';
 import { SensorMarker } from 'SensorMarker';
@@ -33,18 +29,19 @@ import MapHtmlOverlay from 'MapHtmlOverlay';
 import { PanelData } from '@grafana/data';
 import { MapMarkerGroup } from 'types/mapMarkerGroup';
 import { MapMarker } from 'types/mapMarker';
+import { Webcam } from 'types/webcam';
 
 type MapPanelProps = {
   options: any;
   data: PanelData;
   sensors: Sensor[];
+  webcams: Webcam[];
 };
 
-const MapPanel: React.FC<MapPanelProps> = ({ options, data, sensors }) => {
+const MapPanel: React.FC<MapPanelProps> = ({ options, data, sensors, webcams }) => {
   const map = useMap();
 
   const [mapMarkerGroups, setMapMarkerGroups] = useState<MapMarkerGroup[]>([]);
-  const [webcams, setWebcams] = useState<webcam[]>([]);
   const [layers, setLayers] = useState<mapLayer[]>([]);
   const [currentZoom, setCurrentZoom] = useState<number>(map.getZoom());
   const [showSensorNames, setShowSensorNames] = useState(false);
@@ -56,13 +53,6 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data, sensors }) => {
   }, [options]);
 
   useEffect(() => {
-    if (options.enableWebCams) {
-      const unConvWebcams = options.useMockData ? mockWebcams : extractWebcamsFromGrafanaStream(data);
-      const mapWebcams: webcam[] = unConvWebcams.map(element => projectAndRemapLocObject(element) as webcam);
-      setWebcams(mapWebcams);
-    }
-
-
     const mGroups = [] as MapMarkerGroup[];
     sensors.forEach(s => {
       const pos = s.coord as LatLngExpression;
@@ -267,9 +257,7 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data, sensors }) => {
           ))}
       </LayersControl>
       <LegendControl
-        symbols={sensorTypeConfig.filter(ts =>
-          sensors.find(s => (s.type ? s.type : 'default') === ts.type)
-        )}
+        symbols={sensorTypeConfig.filter(ts => sensors.find(s => (s.type ? s.type : 'default') === ts.type))}
       ></LegendControl>
       <WMSLegendControl mapLayers={layers}></WMSLegendControl>
       {webcams.map(c => {

@@ -1,6 +1,6 @@
-import { webcam } from 'types/webcam';
+import { Webcam } from 'types/webcam';
 
-export const mockWebcams: webcam[] = [
+export const mockWebcams: Webcam[] = [
   {
     name: 'Venabygdsfjellet',
     coord: [6658071.468, 572343.018],

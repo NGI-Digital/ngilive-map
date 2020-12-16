@@ -86,7 +86,7 @@ const extractSensorsFromGrafanaStream = (data: PanelData): Sensor[] => {
       min: samples.fields[colonPos['min']].values.get(i),
       max: samples.fields[colonPos['max']].values.get(i),
       mean: samples.fields[colonPos['avg']].values.get(i),
-      instrumentType: samples.fields[colonPos['instrument_type']].values.get(i),
+      type: samples.fields[colonPos['instrument_type']].values.get(i),
     };
     const lastValue: number = getLastValueForInstrumentID(
       samples.fields[colonPos['instrument_id']].values.get(i),

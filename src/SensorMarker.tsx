@@ -1,13 +1,13 @@
 import { getColorFromHexRgbOrName } from '@grafana/data';
 import { sensorTypeConfig } from 'data/defualtSensorConfig';
-import { MapMarker } from 'MapPanel';
 import React, { useEffect, useState } from 'react';
-import { CircleMarker, Popup, Tooltip } from 'react-leaflet';
+import { CircleMarker, Marker, Popup, Tooltip } from 'react-leaflet';
 import { sensorConfig } from 'types/sensorConfig';
 import { Line } from 'react-chartjs-2';
 import { getDateTimeFromTimestamp } from 'utilities/utils';
 import { Sensor } from 'types/sensor';
 import getTimeSerialFromGrafanaStream from 'utilities/sensorTimeSeries';
+import { MapMarker } from 'types/mapMarker';
 
 type SensorMarkerProps = {
   marker: MapMarker;

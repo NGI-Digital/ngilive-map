@@ -10,20 +10,15 @@ import {
   useMapEvents,
   ScaleControl,
 } from 'react-leaflet';
-import proj4 from 'proj4';
 import projectAndRemapLocObject from 'utilities/locObjectProjecteorAndMapper';
-import defineProjectionZones from 'utilities/defineProjectionZones';
 import { mapLayer } from 'types/mapLayer';
 import { mockLayers } from 'data/mockLayers';
 import EsriTiledMapLayer from 'components/EsriTiledMapLayer';
 import EsriDynamicLayer from 'components/EsriDynamicLayer';
-import extractSensorsFromGrafanaStream from 'utilities/sensorDataObjects';
 import { Sensor } from 'types/sensor';
-import { mockSensors } from 'data/mockSensors';
 import { mockWebcams } from 'data/mockWebcams';
-import { LatLngExpression, PointExpression } from 'leaflet';
-import { envelope } from 'types/envelope';
-import { getSensorsExtent } from 'utilities/utils';
+import { BoundsLiteral, LatLngExpression, PointExpression } from 'leaflet';
+import { getSensorBounds } from 'utilities/utils';
 import { sensorTypeConfig } from 'data/defualtSensorConfig';
 import LegendControl from 'components/LegendControl';
 import WMSLegendControl from 'components/WMSLegendControl';
@@ -36,6 +31,8 @@ import { SensorMarker } from 'SensorMarker';
 import { GroupMarker } from 'GroupMarker';
 import MapHtmlOverlay from 'MapHtmlOverlay';
 import { PanelData } from '@grafana/data';
+import { MapMarkerGroup } from 'types/mapMarkerGroup';
+import { MapMarker } from 'types/mapMarker';
 
 type MapPanelProps = {
   options: any;
@@ -43,105 +40,68 @@ type MapPanelProps = {
   sensors: Sensor[];
 };
 
-export type MapMarker = {
-  position: LatLngExpression;
-  name: string;
-  type: string;
-  sensor: Sensor;
-  config: sensorConfig;
-};
-
-export type MapMarkerGroup = {
-  markers: MapMarker[];
-  center: LatLngExpression;
-  toggleOpen: boolean | undefined;
-};
-
 const MapPanel: React.FC<MapPanelProps> = ({ options, data, sensors }) => {
   const map = useMap();
+
   const [mapMarkerGroups, setMapMarkerGroups] = useState<MapMarkerGroup[]>([]);
   const [webcams, setWebcams] = useState<webcam[]>([]);
-  // const [sensors, setSensors] = useState<Sensor[]>([]);
   const [layers, setLayers] = useState<mapLayer[]>([]);
   const [currentZoom, setCurrentZoom] = useState<number>(map.getZoom());
   const [showSensorNames, setShowSensorNames] = useState(false);
-
+  const [bounds] = useState<BoundsLiteral>(getSensorBounds(sensors));
   const expandAtZoomLevel = 17;
 
   useEffect(() => {
-    proj4.defs(defineProjectionZones());
-    const configLayerList = options.layers;
-    setLayers(options.useMockLayers ? mockLayers : configLayerList);
-
-    // Example on usage of setGrafanaVariable
-    // Could be called on a click event as well
-    // setGrafanaVariable("test", "2")
-  }, [setLayers, options]);
+    setLayers(options.useMockLayers ? mockLayers : options.layers);
+  }, [options]);
 
   useEffect(() => {
-    console.log('updated');
-    //console.log(options);
-    // const unConvSensors = options.useMockData ? mockSensors : extractSensorsFromGrafanaStream(data);
-    // console.log({ unConvSensors });
-    // const mapSensors: Sensor[] = unConvSensors
-    //   .map(element => projectAndRemapLocObject(element) as Sensor)
-    //   .filter(s => s.coord[0] > 1 && s.coord[1] > 1);
-    const sensorsExtent: envelope = getSensorsExtent(sensors);
-    // setSensors(mapSensors);
-
-    // get webcams
     if (options.enableWebCams) {
       const unConvWebcams = options.useMockData ? mockWebcams : extractWebcamsFromGrafanaStream(data);
       const mapWebcams: webcam[] = unConvWebcams.map(element => projectAndRemapLocObject(element) as webcam);
       setWebcams(mapWebcams);
     }
 
-    if (sensors) {
-      console.log('sensors ja');
-      console.log({ sensors });
-      const mGroups = [] as MapMarkerGroup[];
-      sensors.forEach(s => {
-        const pos = s.coord as LatLngExpression;
-        const existingGroup = mGroups.find(m => m.center[0] === pos[0] && m.center[1] === pos[1]);
-        const sensorToPush = {
-          name: s.name,
-          position: pos,
-          type: s.instrumentType,
-          sensor: s,
-          config: getSensorConfig(s.instrumentType),
-        } as MapMarker;
-        if (existingGroup) {
-          existingGroup.markers.push(sensorToPush);
-        } else {
-          mGroups.push({
-            center: pos,
-            markers: [sensorToPush],
-            toggleOpen: undefined,
-          });
-        }
-      });
-      setMapMarkerGroups(mGroups);
-    }
+
+    const mGroups = [] as MapMarkerGroup[];
+    sensors.forEach(s => {
+      const pos = s.coord as LatLngExpression;
+      const existingGroup = mGroups.find(m => m.center[0] === pos[0] && m.center[1] === pos[1]);
+      const sensorToPush = {
+        name: s.name,
+        position: pos,
+        type: s.type,
+        sensor: s,
+        config: getSensorConfig(s.type),
+      } as MapMarker;
+      if (existingGroup) {
+        existingGroup.markers.push(sensorToPush);
+      } else {
+        mGroups.push({
+          center: pos,
+          markers: [sensorToPush],
+          isOpen: undefined,
+        });
+      }
+    });
+    setMapMarkerGroups(mGroups);
 
     if (sensors.length > 0) {
-      map.fitBounds([
-        [sensorsExtent.minX, sensorsExtent.minY],
-        [sensorsExtent.maxX, sensorsExtent.maxY],
-      ]);
-      // Close all open groups to prevent insane everything open map - detect bounds change?
+      setCurrentZoom(map.getZoom());
+      map.fitBounds(bounds);
     }
-  }, [data, map, options.enableWebCams, sensors, options.useMockData]);
+  }, [data, map, options.enableWebCams, sensors, options.useMockData, bounds]);
 
   const toggleOpen = (index: number) => {
     const state = [...mapMarkerGroups];
 
-    const isOpen = mapMarkerGroups[index].toggleOpen;
+    const isOpen = mapMarkerGroups[index].isOpen;
 
     // You probably mean to close the element
     if (currentZoom > expandAtZoomLevel && isOpen === undefined) {
-      state[index].toggleOpen = false;
+      state[index].isOpen = false;
     } else {
-      state[index].toggleOpen = !mapMarkerGroups[index].toggleOpen;
+      state[index].isOpen = !mapMarkerGroups[index].isOpen;
     }
     setMapMarkerGroups(state);
   };
@@ -189,9 +149,14 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data, sensors }) => {
   };
 
   useMapEvents({
+    // click() {
+    //   map.locate()
+    // },
+    locationfound(e) {
+      map.flyTo(e.latlng, map.getZoom());
+    },
     zoom: () => {
       setCurrentZoom(map.getZoom());
-      console.log('Zoom ', map.getZoom());
     },
   });
 
@@ -250,14 +215,19 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data, sensors }) => {
               ></SensorMarker>
             )}
             {markerGroup.markers.length > 1 && (
-              <GroupMarker group={markerGroup} toggleOpen={() => toggleOpen(i)}></GroupMarker>
+              <GroupMarker
+                group={markerGroup}
+                isOpen={
+                  markerGroup.isOpen ||
+                  (markerGroup.isOpen !== false && currentZoom > expandAtZoomLevel && markerGroup.markers.length > 1)
+                }
+                toggleOpen={() => toggleOpen(i)}
+              ></GroupMarker>
             )}
           </>
 
-          {(markerGroup.toggleOpen ||
-            (markerGroup.toggleOpen !== false &&
-              currentZoom > expandAtZoomLevel &&
-              markerGroup.markers.length > 1)) && (
+          {(markerGroup.isOpen ||
+            (markerGroup.isOpen !== false && currentZoom > expandAtZoomLevel && markerGroup.markers.length > 1)) && (
             <>
               {getSpreadMarkers(markerGroup).map(subMarker => (
                 <>
@@ -270,6 +240,7 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data, sensors }) => {
                   <Polyline
                     interactive={false}
                     weight={1}
+                    noClip={true}
                     color="black"
                     positions={[subMarker.position, markerGroup.center]}
                   ></Polyline>
@@ -297,7 +268,7 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data, sensors }) => {
       </LayersControl>
       <LegendControl
         symbols={sensorTypeConfig.filter(ts =>
-          sensors.find(s => (s.instrumentType ? s.instrumentType : 'default') === ts.type)
+          sensors.find(s => (s.type ? s.type : 'default') === ts.type)
         )}
       ></LegendControl>
       <WMSLegendControl mapLayers={layers}></WMSLegendControl>

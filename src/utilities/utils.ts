@@ -1,35 +1,26 @@
 import { Sensor } from '../types/sensor';
-import { envelope } from '../types/envelope';
-import { formatLabels } from '@grafana/data';
+import { BoundsLiteral } from 'leaflet';
 //import proj4 from 'proj4';
 
-const getSensorsExtent = (sensorArray: Sensor[]): envelope => {
-  const tmpMapEx: envelope = {
-    minX: 9999999999,
-    maxX: -9999999999,
-    minY: 999999999,
-    maxY: -9999999999,
-  };
-  sensorArray.forEach((sensor: Sensor) => {
-    tmpMapEx.minX = tmpMapEx.minX > sensor.coord[0] ? sensor.coord[0] : tmpMapEx.minX;
-    tmpMapEx.maxX = tmpMapEx.maxX < sensor.coord[0] ? sensor.coord[0] : tmpMapEx.maxX;
-    tmpMapEx.minY = tmpMapEx.minY > sensor.coord[1] ? sensor.coord[1] : tmpMapEx.minY;
-    tmpMapEx.maxY = tmpMapEx.maxY < sensor.coord[1] ? sensor.coord[1] : tmpMapEx.maxY;
+const getSensorBounds = (sensors: Sensor[]): BoundsLiteral => {
+  let minX = 9999999999;
+  let maxX = -9999999999;
+  let minY = 999999999;
+  let maxY = -9999999999;
+
+  sensors.forEach((sensor: Sensor) => {
+    minX = minX > sensor.coord[0] ? sensor.coord[0] : minX;
+    maxX = maxX < sensor.coord[0] ? sensor.coord[0] : maxX;
+    minY = minY > sensor.coord[1] ? sensor.coord[1] : minY;
+    maxY = maxY < sensor.coord[1] ? sensor.coord[1] : maxY;
   });
 
-  // console.log('envelope', tmpMapEx);
-  // const minCoord = proj4('EPSG:3857', 'EPSG:4326', [tmpMapEx.minY, tmpMapEx.minX]);
-  // const maxCoord = proj4('EPSG:3857', 'EPSG:4326', [tmpMapEx.maxY, tmpMapEx.maxX]);
-  // console.log('min:max', minCoord, maxCoord);
+  const bounds: BoundsLiteral = [
+    [minX, minY],
+    [maxX, maxY],
+  ];
 
-  // const mapEx: envelope = {
-  //   minX: minCoord[1],
-  //   maxX: maxCoord[1],
-  //   minY: minCoord[0],
-  //   maxY: maxCoord[0],
-  // };
-
-  return tmpMapEx;
+  return bounds;
 };
 
 const getDateTimeFromTimestamp = (timestamp: number): string => {
@@ -52,4 +43,4 @@ const getDateTimeFromTimestamp = (timestamp: number): string => {
   return formattedTime;
 };
 
-export { getSensorsExtent, getDateTimeFromTimestamp };
+export { getDateTimeFromTimestamp, getSensorBounds };

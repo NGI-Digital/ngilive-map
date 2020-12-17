@@ -1,6 +1,6 @@
-import { mapLayer } from 'types/mapLayer';
+import { MapLayer } from 'types/mapLayer';
 
-export const mockLayers: mapLayer[] = [
+export const mockLayers: MapLayer[] = [
   {
     name: 'Flybilder',
     type: 'tiledLayer',

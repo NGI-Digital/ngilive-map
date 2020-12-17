@@ -10,7 +10,7 @@ import {
   useMapEvents,
   ScaleControl,
 } from 'react-leaflet';
-import { mapLayer } from 'types/mapLayer';
+import { MapLayer } from 'types/mapLayer';
 import { mockLayers } from 'data/mockLayers';
 import EsriTiledMapLayer from 'components/EsriTiledMapLayer';
 import EsriDynamicLayer from 'components/EsriDynamicLayer';
@@ -42,7 +42,7 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data, sensors, webcams }) 
   const map = useMap();
 
   const [mapMarkerGroups, setMapMarkerGroups] = useState<MapMarkerGroup[]>([]);
-  const [layers, setLayers] = useState<mapLayer[]>([]);
+  const [layers, setLayers] = useState<MapLayer[]>([]);
   const [currentZoom, setCurrentZoom] = useState<number>(map.getZoom());
   const [showSensorNames, setShowSensorNames] = useState(false);
   const [bounds] = useState<BoundsLiteral>(getSensorBounds(sensors));
@@ -139,6 +139,25 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data, sensors, webcams }) 
   };
 
   useMapEvents({
+    // Keep layers state in sync with layers used in layerscontrol
+    overlayadd(e) {
+      if (e.name !== 'Sensor names') {
+        const currentLayer = layers.findIndex(l => l.name === e.name);
+        layers[currentLayer].isVisible = true;
+        setLayers([...layers]);
+      } else {
+        setShowSensorNames(true);
+      }
+    },
+    overlayremove(e) {
+      if (e.name !== 'Sensor names') {
+        const currentLayer = layers.findIndex(l => l.name === e.name);
+        layers[currentLayer].isVisible = false;
+        setLayers([...layers]);
+      } else {
+        setShowSensorNames(false);
+      }
+    },
     // click() {
     //   map.locate()
     // },
@@ -190,9 +209,9 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data, sensors, webcams }) 
   return (
     <>
       <ScaleControl position="bottomright" imperial={false} maxWidth={100}></ScaleControl>
-      {options.useSensorNames && (
+      {/* {options.useSensorNames && (
         <MapHtmlOverlay showSensorNames={showSensorNames} setShowSensorNames={setShowSensorNames}></MapHtmlOverlay>
-      )}
+      )} */}
       {mapMarkerGroups.map((markerGroup, i) => (
         <>
           <>
@@ -255,11 +274,17 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data, sensors, webcams }) 
               {layerElement(layer)}
             </LayersControl.Overlay>
           ))}
+        {/* Dummy layer for sensor name switch */}
+        {options.useSensorNames && (
+          <LayersControl.Overlay name="Sensor names">
+            <TileLayer url="" />
+          </LayersControl.Overlay>
+        )}
       </LayersControl>
       <LegendControl
         symbols={sensorTypeConfig.filter(ts => sensors.find(s => (s.type ? s.type : 'default') === ts.type))}
       ></LegendControl>
-      <WMSLegendControl mapLayers={layers}></WMSLegendControl>
+      <WMSLegendControl mapLayers={layers} position="bottomleft"></WMSLegendControl>
       {webcams.map(c => {
         return (
           <Marker icon={iconCamera} position={c.coord as [number, number]}>

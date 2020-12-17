@@ -1,11 +1,11 @@
 import { PanelPlugin } from '@grafana/data';
 import { Map } from './Map';
 import 'leaflet.css';
-import { mapLayer } from 'types/mapLayer';
+import { MapLayer } from 'types/mapLayer';
 import { PanelOptionCode } from 'JsonEditor';
 
 export type MapEditorFunctionProps = {
-  layers: mapLayer[];
+  layers: MapLayer[];
   useMockData: boolean;
   useMockLayers: boolean;
   enableWebCams: boolean;

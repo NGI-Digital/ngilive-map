@@ -1,6 +1,6 @@
 export type layerType = 'esriTiledMapLayer' | 'esriDynamicMapLayer' | 'WMSLayer' | 'WMStiledLayer' | 'tiledLayer' | '';
 
-export type mapLayer = {
+export type MapLayer = {
   name: string;
   serviceUrl: string;
   type: layerType;

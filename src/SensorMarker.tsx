@@ -78,7 +78,6 @@ function exportToCsv(event: React.MouseEvent, s: Sensor) {
 export const SensorMarker: React.FC<SensorMarkerProps> = ({ marker, showSensorNames, data, options }) => {
   const config = getSensorConfig(marker.type);
   const [currentMarker, setCurrentMarker] = useState<MapMarker>(marker);
-  const [timeseries, setTimeseries] = useState<MapMarker>(marker);
   const [datapoints, setDataPoints] = useState<number[]>([]);
   const [datapointLabels, setDatapointLabels] = useState<number[]>([]);
 
@@ -141,29 +140,14 @@ export const SensorMarker: React.FC<SensorMarkerProps> = ({ marker, showSensorNa
           marker.sensor.max = +Math.max(...timeserial.values).toFixed(3);
           marker.sensor.min = +Math.min(...timeserial.values).toFixed(3);
           marker.sensor.mean = +average(timeserial.values).toFixed(3);
-          console.log(marker);
+          marker.sensor.lastValue =
+            timeserial.values[timeserial.timestamps.indexOf(timeserial.timestamps.sort((a, b) => b - a)[0])];
         }
       }
-      // timeseries_data.labels =
-      //   marker.sensor.timeSerial === null || marker.sensor.timeSerial === undefined
-      //     ? ([] as number[])
-      //     : (marker.sensor.timeSerial.timestamps as number[]);
       const extractedDataPoints = marker.sensor.timeSerial?.values ?? [];
       const extractedDataPointLabels = marker.sensor.timeSerial?.timestamps as number[];
-      console.log({ extractedDataPoints });
-      console.log({ extractedDataPointLabels });
       setDataPoints(extractedDataPoints);
       setDatapointLabels(extractedDataPointLabels);
-
-      // timeseries_data.datasets[0].data =
-      //   marker.sensor.timeSerial === null || marker.sensor.timeSerial === undefined
-      //     ? ([] as number[])
-      //     : marker.sensor.timeSerial.values;
-      // timeseries_data.datasets[0].label =
-      //   marker.sensor.timeSerial === null || marker.sensor.timeSerial === undefined
-      //     ? ''
-      //     : marker.sensor.instrumentType + '[' + marker.sensor.unit + ']';
-      console.log(marker);
       setCurrentMarker({ ...marker });
     }
   };

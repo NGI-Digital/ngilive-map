@@ -1,120 +1,55 @@
 import { useEffect, useState } from 'react';
-import { useMap } from 'react-leaflet';
-//import { MapControlProps } from 'react-leaflet';
-import ReactDOM from 'react-dom';
-import L from 'leaflet';
-//import { Map } from 'leaflet';
 import React from 'react';
-//import { sensorConfig } from 'types/sensorConfig';
 import '../customComps.css';
-import { mapLayer } from '../types/mapLayer';
-//import { Map as LeafletMap } from 'leaflet';
+import { MapLayer } from '../types/mapLayer';
 
 type WMSLegendControlProps = {
-  mapLayers: mapLayer[];
+  mapLayers: MapLayer[];
+  position: 'bottomleft' | 'bottomright' | 'topright' | 'topleft';
 };
 
-const LegendControl: React.FC<WMSLegendControlProps> = ({ mapLayers }) => {
-  const map = useMap();
-  const [control, setControl] = useState<L.Control | null>(null);
+const POSITION_CLASSES = {
+  bottomleft: 'leaflet-bottom leaflet-left',
+  bottomright: 'leaflet-bottom leaflet-right',
+  topleft: 'leaflet-top leaflet-left',
+  topright: 'leaflet-top leaflet-right',
+};
+
+const LegendControl: React.FC<WMSLegendControlProps> = ({ mapLayers, position }) => {
   const [isCollapsed, setIsCollapsed] = useState(true);
-  const [includLayersInLegend, setIncludeLayersInLegend] = useState<string[]>([]);
+  const positionClass = (position && POSITION_CLASSES[position]) || POSITION_CLASSES.topright;
+  const [legendLayers, setLegendLayers] = useState<MapLayer[]>([]);
 
-  function createContent() {
-    var counter = 0;
-    console.log('includLayersInLegend', includLayersInLegend);
+  useEffect(() => {
+    setLegendLayers(mapLayers.filter(l => l.WMSLegendURL && l.isVisible));
+  }, [mapLayers]);
 
-    const buttonHTML = (
-      <div>
-        <button className="WMSLegendButtonStyle" onClick={(e): void => setIsCollapsed(!isCollapsed)}>
-          <span className="tooltiptext">Vis legende for temakartlag</span>
-        </button>
-      </div>
-    );
-
-    const buttonHTMLChecked = (
-      <div>
-        <button className="WMSLegendButtonStyleChecked" onClick={(e): void => setIsCollapsed(!isCollapsed)}>
-          <span className="tooltiptext">Ingen temakartlag synlinge</span>
-        </button>
-      </div>
-    );
-
-    const legehtHTML = (
-      <div className="WMSLegendStyle" onClick={(e): void => setIsCollapsed(true)}>
-        {mapLayers
-          .filter(l => l.WMSLegendURL !== null && l.WMSLegendURL !== '')
-          .filter(l => includLayersInLegend.includes(l.name) || l.isVisible === true)
-          .map(l => {
-            counter++;
-            return (
-              <>
-                <img style={{ height: l.WMSLegendScale ? l.WMSLegendScale : '400px' }} src={l.WMSLegendURL}></img>
-              </>
-            );
-          })}
-      </div>
-    );
-
-    // console.log('Antall:', counter);
-    const div = L.DomUtil.create('div', '');
-    if (!isCollapsed && counter === 0) {
-      ReactDOM.render(buttonHTMLChecked, div);
-    } else if (isCollapsed) {
-      ReactDOM.render(buttonHTML, div);
-    } else {
-      ReactDOM.render(legehtHTML, div);
-    }
-    return div;
-  }
-
-  // useEffect(() => {
-  //   console.log('her er jeg XX');
-  //   console.log('includLayersInLegendXX', includLayersInLegend);
-  // }, [mapLayers]);
-
-  // TODO: Fix
-  // useEffect(() => {
-  //   // console.log('her er jeg #1');
-  //   if (control) {
-  //     control.onAdd = map => {
-  //       const ht = createContent();
-  //       return ht;
-  //     };
-
-  //     control.onRemove = map => {};
-
-  //     if (control) {
-  //       map.removeControl(control);
-  //     }
-  //     control.addTo(map);
-  //   }
-  // }, [mapLayers, control, isCollapsed, includLayersInLegend, createContent, map]);
-
-  // useEffect(() => {
-  //   // notIncludeLayers = [];
-
-  //   const c = new L.Control({ position: 'bottomleft' });
-  //   console.log('her er jeg');
-
-  //   if (map) {
-  //     map.addEventListener('overlayremove', (e: any) => {
-  //       console.log('her');
-  //       // const newArr = includLayersInLegend.filter(s => s !== e.name);
-  //       setIncludeLayersInLegend(state => state.filter(s => s !== e.name));
-  //     });
-  //     map.addEventListener('overlayadd', (e: any) => {
-  //       console.log(includLayersInLegend, e.name);
-  //       console.log('Pakka ut:', ...includLayersInLegend);
-  //       setIncludeLayersInLegend(state => [...state, e.name]);
-  //       console.log(includLayersInLegend, e.name);
-  //     });
-  //   }
-
-  //   setControl(c);
-  // }, [includLayersInLegend, map]);
-
-  return <></>;
+  return (
+    <>
+      {legendLayers.length > 0 && (
+        <div className={positionClass}>
+          <div className="leaflet-control leaflet-bar">
+            {!isCollapsed && (
+              <div className="WMSLegendStyle" onClick={(): void => setIsCollapsed(true)}>
+                {legendLayers.map(l => {
+                  return (
+                    <>
+                      <img style={{ height: l.WMSLegendScale ? l.WMSLegendScale : '400px' }} src={l.WMSLegendURL}></img>
+                    </>
+                  );
+                })}
+              </div>
+            )}
+            {isCollapsed && (
+              <button className="WMSLegendButtonStyle" onClick={(): void => setIsCollapsed(!isCollapsed)}>
+                <span className="tooltiptext">Vis legende for temakartlag</span>
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+    </>
+  );
 };
 
 export default LegendControl;

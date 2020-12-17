@@ -1,7 +1,6 @@
-import { createContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useMap } from 'react-leaflet';
 import * as esri from 'esri-leaflet';
-import { Map } from 'leaflet';
 
 const EsriTiledMapLayer = (props: any) => {
   const map = useMap();

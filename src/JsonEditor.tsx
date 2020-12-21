@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { StandardEditorProps } from '@grafana/data';
-import { CodeEditor, Input, TextArea, Select } from '@grafana/ui';
+import { TextArea } from '@grafana/ui';
 
 interface Props extends StandardEditorProps<string, any, any> {}
 

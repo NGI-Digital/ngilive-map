@@ -4,9 +4,6 @@
   "compilerOptions": {
     "rootDir": "./src",
     "baseUrl": "./src",
-    "typeRoots": ["./node_modules/@types"],
-    "esModuleInterop": true,
-    "noUnusedLocals": false,
-    "suppressImplicitAnyIndexErrors": true
+    "typeRoots": ["./node_modules/@types"]
   }
 }

@@ -10,6 +10,7 @@ const EsriDynamicLayer = (props: any) => {
       url: props.url,
       maxZoom: 20,
     });
+    //@ts-ignore
     layer.addTo(map);
   }, [map, props.url]);
 

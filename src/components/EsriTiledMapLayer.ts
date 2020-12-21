@@ -10,7 +10,7 @@ const EsriTiledMapLayer = (props: any) => {
       url: props.url,
       maxZoom: 18,
     });
-
+    //@ts-ignore
     layer.addTo(map);
   }, [map, props.url]);
 

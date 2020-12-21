@@ -33,12 +33,11 @@ const projectAndRemapLocObject = (lokObject: Sensor | Webcam): Sensor | Webcam =
 
     newLokObject.coord = [coord[1], coord[0]];
     return newLokObject;
-  } else {
-    const coord = proj4('EPSG:' + coordSystem, 'EPSG:4326', [Math.min(east, north), Math.max(east, north)]);
-
-    newLokObject.coord = [coord[1], coord[0]];
-    return newLokObject;
   }
+  const coord = proj4('EPSG:' + coordSystem, 'EPSG:4326', [Math.min(east, north), Math.max(east, north)]);
+
+  newLokObject.coord = [coord[1], coord[0]];
+  return newLokObject;
 };
 
 export { projectAndRemapLocObject, defineProjectionZones };

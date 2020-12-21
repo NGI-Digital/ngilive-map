@@ -15,7 +15,7 @@ import { mockLayers } from 'data/mockLayers';
 import EsriTiledMapLayer from 'components/EsriTiledMapLayer';
 import EsriDynamicLayer from 'components/EsriDynamicLayer';
 import { Sensor } from 'types/sensor';
-import { BoundsLiteral, LatLngExpression, PointExpression } from 'leaflet';
+import { BoundsLiteral, LatLngTuple, PointExpression } from 'leaflet';
 import { getSensorBounds } from 'utilities/utils';
 import { sensorTypeConfig } from 'data/defualtSensorConfig';
 import LegendControl from 'components/LegendControl';
@@ -25,7 +25,6 @@ import { iconCamera } from 'utilities/defineIcons';
 import { sensorConfig } from 'types/sensorConfig';
 import { SensorMarker } from 'SensorMarker';
 import { GroupMarker } from 'GroupMarker';
-import MapHtmlOverlay from 'MapHtmlOverlay';
 import { PanelData } from '@grafana/data';
 import { MapMarkerGroup } from 'types/mapMarkerGroup';
 import { MapMarker } from 'types/mapMarker';
@@ -55,8 +54,9 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data, sensors, webcams }) 
   useEffect(() => {
     const mGroups = [] as MapMarkerGroup[];
     sensors.forEach(s => {
-      const pos = s.coord as LatLngExpression;
-      const existingGroup = mGroups.find(m => m.center[0] === pos[0] && m.center[1] === pos[1]);
+      const pos = s.coord as LatLngTuple;
+      const existingClusterOnSameLocation = mGroups.find(m => m.center[0] === pos[0] && m.center[1] === pos[1]);
+
       const sensorToPush = {
         name: s.name,
         position: pos,
@@ -64,8 +64,8 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data, sensors, webcams }) 
         sensor: s,
         config: getSensorConfig(s.type),
       } as MapMarker;
-      if (existingGroup) {
-        existingGroup.markers.push(sensorToPush);
+      if (existingClusterOnSameLocation) {
+        existingClusterOnSameLocation.markers.push(sensorToPush);
       } else {
         mGroups.push({
           center: pos,
@@ -74,6 +74,7 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data, sensors, webcams }) 
         });
       }
     });
+
     setMapMarkerGroups(mGroups);
 
     if (sensors.length > 0) {
@@ -232,6 +233,7 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data, sensors, webcams }) 
                 }
                 toggleOpen={() => toggleOpen(i)}
               ></GroupMarker>
+              // <LocationMarker mapMarker={markerGroup.markers[0]}></LocationMarker>
             )}
           </>
 
@@ -276,7 +278,7 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data, sensors, webcams }) 
           ))}
         {/* Dummy layer for sensor name switch */}
         {options.useSensorNames && (
-          <LayersControl.Overlay name="Sensor names">
+          <LayersControl.Overlay name="Sensornavn">
             <TileLayer url="" />
           </LayersControl.Overlay>
         )}

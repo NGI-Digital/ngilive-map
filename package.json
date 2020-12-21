@@ -11,38 +11,26 @@
   "author": "NGI",
   "license": "MIT",
   "devDependencies": {
-    "@grafana/runtime": "^7.3.6",
     "@grafana/data": "^7.3.6",
     "@grafana/toolkit": "^7.3.6",
     "@grafana/ui": "^7.3.6",
     "@types/leaflet": "^1.5.19",
-    "@types/grafana": "github:CorpGlory/types-grafana",
     "@types/proj4": "^2.5.0",
-    "@types/react": "17.0.0",
-    "@types/react-dom": "17.0.0",
     "@types/react-leaflet": "^2.5.2",
     "leaflet": "^1.7.1",
     "proj4": "^2.6.3",
     "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "react-leaflet": "^3.0.4",
-    "react-scripts": "4.0.1",
-    "typescript": "4.1.3"
+    "react-leaflet": "^3.0.5"
   },
   "dependencies": {
     "@types/esri-leaflet": "^2.1.6",
     "@types/lodash.chunk": "^4.2.6",
-    "@types/react-leaflet-markercluster": "^2.0.0",
     "chart.js": "^2.9.4",
-    "eslint-plugin-prettier": "^3.3.0",
     "esri-leaflet": "^2.5.1",
-    "leaflet.markercluster": "^1.4.1",
     "lodash.chunk": "^4.2.0",
-    "moment": "^2.29.1",
-    "overlapping-marker-spiderfier-leaflet": "^0.2.7",
-    "patternomaly": "^1.3.2",
-    "react-chartjs-2": "^2.11.1",
-    "react-leaflet-markercluster": "^3.0.0-rc1",
-    "react-leaflet-street-view": "^1.0.9"
+    "react-chartjs-2": "^2.11.1"
+  },
+  "engines": {
+    "node": ">=12 <13"
   }
 }

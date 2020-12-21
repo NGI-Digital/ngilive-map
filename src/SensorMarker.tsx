@@ -1,7 +1,7 @@
 import { getColorFromHexRgbOrName } from '@grafana/data';
 import { sensorTypeConfig } from 'data/defualtSensorConfig';
 import React, { useEffect, useState } from 'react';
-import { CircleMarker, Marker, Popup, Tooltip } from 'react-leaflet';
+import { CircleMarker, Popup, Tooltip } from 'react-leaflet';
 import { sensorConfig } from 'types/sensorConfig';
 import { Line } from 'react-chartjs-2';
 import { getDateTimeFromTimestamp } from 'utilities/utils';
@@ -44,7 +44,7 @@ const getSensorConfig = (type: string): sensorConfig => {
   return sensorTypeConfig.find(s => s.type === 'default')!;
 };
 
-function exportToCsv(event: React.MouseEvent, s: Sensor) {
+function exportToCsv(s: Sensor) {
   const filename = s.name + '.csv';
   var csvFile = '';
   if (s.timeSerial) {
@@ -189,7 +189,7 @@ export const SensorMarker: React.FC<SensorMarkerProps> = ({ marker, showSensorNa
                 <td>Last value:</td>
                 <td>{currentMarker.sensor.lastValue}</td>
                 <td style={{ textAlign: 'center', verticalAlign: 'middle', width: '150px' }} rowSpan={4}>
-                  <button style={buttonStyle} onClick={(e): void => exportToCsv(e, currentMarker.sensor)}>
+                  <button style={buttonStyle} onClick={(e): void => exportToCsv(currentMarker.sensor)}>
                     Last ned data
                   </button>
                 </td>

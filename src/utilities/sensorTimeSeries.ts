@@ -1,4 +1,4 @@
-import { DataFrame, PanelData } from '@grafana/data';
+import { PanelData } from '@grafana/data';
 import { sensorTimeSerial } from '../types/sensorTimeSierial';
 
 const getTimeSerialFromGrafanaStream = (data: PanelData, sensorName: string, options: any): sensorTimeSerial => {

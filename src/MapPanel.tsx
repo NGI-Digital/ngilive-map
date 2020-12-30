@@ -6,7 +6,6 @@ import {
   LayersControl,
   WMSTileLayer,
   useMap,
-  Polyline,
   useMapEvents,
   ScaleControl,
 } from 'react-leaflet';
@@ -15,20 +14,15 @@ import { mockLayers } from 'data/mockLayers';
 import EsriTiledMapLayer from 'components/EsriTiledMapLayer';
 import EsriDynamicLayer from 'components/EsriDynamicLayer';
 import { Sensor } from 'types/sensor';
-import { BoundsLiteral, LatLngTuple, PointExpression } from 'leaflet';
-import { getSensorBounds } from 'utilities/utils';
 import { sensorTypeConfig } from 'data/defualtSensorConfig';
 import LegendControl from 'components/LegendControl';
 import WMSLegendControl from 'components/WMSLegendControl';
 import 'leaflet/dist/leaflet.css';
 import { iconCamera } from 'utilities/defineIcons';
-import { sensorConfig } from 'types/sensorConfig';
-import { SensorMarker } from 'SensorMarker';
-import { GroupMarker } from 'GroupMarker';
 import { PanelData } from '@grafana/data';
-import { MapMarkerGroup } from 'types/mapMarkerGroup';
-import { MapMarker } from 'types/mapMarker';
 import { Webcam } from 'types/webcam';
+import { MapMarkers } from 'MapMarkers';
+import { getSensorBounds } from 'utilities/utils';
 
 type MapPanelProps = {
   options: any;
@@ -40,118 +34,36 @@ type MapPanelProps = {
 const MapPanel: React.FC<MapPanelProps> = ({ options, data, sensors, webcams }) => {
   const map = useMap();
 
-  const [mapMarkerGroups, setMapMarkerGroups] = useState<MapMarkerGroup[]>([]);
   const [layers, setLayers] = useState<MapLayer[]>([]);
-  const [currentZoom, setCurrentZoom] = useState<number>(map.getZoom());
+  const [currentZoomLevel, setCurrentZoom] = useState<number>(map.getZoom());
   const [showSensorNames, setShowSensorNames] = useState(false);
-  const [bounds] = useState<BoundsLiteral>(getSensorBounds(sensors));
-  const expandAtZoomLevel = 17;
+  const showSensorNamesLayerText = 'sensornavn';
+
+  useEffect(() => {
+    if (sensors.length > 0) {
+      setCurrentZoom(map.getZoom());
+      map.fitBounds(getSensorBounds(sensors));
+    }
+  }, [sensors]);
 
   useEffect(() => {
     setLayers(options.useMockLayers ? mockLayers : options.layers);
   }, [options]);
 
-  useEffect(() => {
-    const mGroups = [] as MapMarkerGroup[];
-    sensors.forEach(s => {
-      const pos = s.coord as LatLngTuple;
-      const existingClusterOnSameLocation = mGroups.find(m => m.center[0] === pos[0] && m.center[1] === pos[1]);
-
-      const sensorToPush = {
-        name: s.name,
-        position: pos,
-        type: s.type,
-        sensor: s,
-        config: getSensorConfig(s.type),
-      } as MapMarker;
-      if (existingClusterOnSameLocation) {
-        existingClusterOnSameLocation.markers.push(sensorToPush);
-      } else {
-        mGroups.push({
-          center: pos,
-          markers: [sensorToPush],
-          isOpen: undefined,
-        });
-      }
-    });
-
-    setMapMarkerGroups(mGroups);
-
-    if (sensors.length > 0) {
-      setCurrentZoom(map.getZoom());
-      map.fitBounds(bounds);
-    }
-  }, [data, map, options.enableWebCams, sensors, options.useMockData, bounds]);
-
-  const toggleOpen = (index: number) => {
-    const state = [...mapMarkerGroups];
-
-    const isOpen = mapMarkerGroups[index].isOpen;
-
-    // You probably mean to close the element
-    if (currentZoom > expandAtZoomLevel && isOpen === undefined) {
-      state[index].isOpen = false;
-    } else {
-      state[index].isOpen = !mapMarkerGroups[index].isOpen;
-    }
-    setMapMarkerGroups(state);
-  };
-
-  const getSpreadMarkers = (markerGroup: MapMarkerGroup): MapMarker[] => {
-    const center = map.latLngToLayerPoint(markerGroup.center);
-    const numberOfSensors = markerGroup.markers.length;
-    const zoom = map.getZoom();
-
-    const factor = -21;
-    const addFactor = 22 * zoom;
-    const circumference = factor * zoom + addFactor + numberOfSensors * 11;
-    const legLength = (circumference / Math.PI) * 2;
-
-    const angleStep = (Math.PI * 2) / (numberOfSensors > 2 ? numberOfSensors : 5);
-    let iteration = 0;
-
-    return markerGroup.markers
-      .map(m => {
-        iteration += 1;
-        const angle = iteration * angleStep;
-        const center_east = center.x;
-        const center_north = center.y;
-        const pos_east = center_east + legLength * Math.cos(angle);
-        const pos_north = center_north + legLength * Math.sin(angle);
-
-        return {
-          name: m.name,
-          position: map.layerPointToLatLng([pos_east, pos_north] as PointExpression),
-          type: m.type ?? '',
-          sensor: m.sensor,
-          config: m.config,
-        };
-      })
-      .sort((a, b) => a.type.localeCompare(b.type));
-  };
-
-  const getSensorConfig = (type: string): sensorConfig => {
-    const currentConfig = sensorTypeConfig.find(s => s.type === type);
-    if (currentConfig) {
-      return currentConfig;
-    }
-
-    return sensorTypeConfig.find(s => s.type === 'default')!;
-  };
-
   useMapEvents({
     // Keep layers state in sync with layers used in layerscontrol
     overlayadd(e) {
-      if (e.name !== 'Sensor names') {
+      if (e.name !== showSensorNamesLayerText) {
         const currentLayer = layers.findIndex(l => l.name === e.name);
         layers[currentLayer].isVisible = true;
         setLayers([...layers]);
       } else {
+        console.log('show sensor names');
         setShowSensorNames(true);
       }
     },
     overlayremove(e) {
-      if (e.name !== 'Sensor names') {
+      if (e.name !== showSensorNamesLayerText) {
         const currentLayer = layers.findIndex(l => l.name === e.name);
         layers[currentLayer].isVisible = false;
         setLayers([...layers]);
@@ -210,57 +122,13 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data, sensors, webcams }) 
   return (
     <>
       <ScaleControl position="bottomright" imperial={false} maxWidth={100}></ScaleControl>
-      {/* {options.useSensorNames && (
-        <MapHtmlOverlay showSensorNames={showSensorNames} setShowSensorNames={setShowSensorNames}></MapHtmlOverlay>
-      )} */}
-      {mapMarkerGroups.map((markerGroup, i) => (
-        <>
-          <>
-            {markerGroup.markers.length === 1 && (
-              <SensorMarker
-                options={options}
-                data={data}
-                marker={markerGroup.markers[0]}
-                showSensorNames={showSensorNames}
-              ></SensorMarker>
-            )}
-            {markerGroup.markers.length > 1 && (
-              <GroupMarker
-                group={markerGroup}
-                isOpen={
-                  markerGroup.isOpen ||
-                  (markerGroup.isOpen !== false && currentZoom > expandAtZoomLevel && markerGroup.markers.length > 1)
-                }
-                toggleOpen={() => toggleOpen(i)}
-              ></GroupMarker>
-              // <LocationMarker mapMarker={markerGroup.markers[0]}></LocationMarker>
-            )}
-          </>
-
-          {(markerGroup.isOpen ||
-            (markerGroup.isOpen !== false && currentZoom > expandAtZoomLevel && markerGroup.markers.length > 1)) && (
-            <>
-              {getSpreadMarkers(markerGroup).map(subMarker => (
-                <>
-                  <SensorMarker
-                    options={options}
-                    marker={subMarker}
-                    data={data}
-                    showSensorNames={showSensorNames}
-                  ></SensorMarker>
-                  <Polyline
-                    interactive={false}
-                    weight={1}
-                    noClip={true}
-                    color="black"
-                    positions={[subMarker.position, markerGroup.center]}
-                  ></Polyline>
-                </>
-              ))}
-            </>
-          )}
-        </>
-      ))}
+      <MapMarkers
+        currentZoom={currentZoomLevel}
+        showSensorNames={showSensorNames}
+        sensors={sensors}
+        data={data}
+        options={options}
+      ></MapMarkers>
       <LayersControl position="bottomright">
         {layers
           .filter(l => l.isBaseMap)
@@ -278,7 +146,7 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data, sensors, webcams }) 
           ))}
         {/* Dummy layer for sensor name switch */}
         {options.useSensorNames && (
-          <LayersControl.Overlay name="Sensornavn">
+          <LayersControl.Overlay name={showSensorNamesLayerText}>
             <TileLayer url="" />
           </LayersControl.Overlay>
         )}

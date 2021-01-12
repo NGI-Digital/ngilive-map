@@ -1,18 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import {
-  TileLayer,
-  Popup,
-  Marker,
-  LayersControl,
-  WMSTileLayer,
-  useMap,
-  useMapEvents,
-  ScaleControl,
-} from 'react-leaflet';
+import { TileLayer, Popup, Marker, LayersControl, useMap, useMapEvents, ScaleControl } from 'react-leaflet';
 import { MapLayer } from 'types/mapLayer';
 import { mockLayers } from 'data/mockLayers';
-import EsriTiledMapLayer from 'components/EsriTiledMapLayer';
-import EsriDynamicLayer from 'components/EsriDynamicLayer';
 import { Sensor } from 'types/sensor';
 import { sensorTypeConfig } from 'data/defualtSensorConfig';
 import LegendControl from 'components/LegendControl';
@@ -23,6 +12,7 @@ import { PanelData } from '@grafana/data';
 import { Webcam } from 'types/webcam';
 import { MapMarkers } from 'MapMarkers';
 import { getSensorBounds } from 'utilities/utils';
+import { MapLayerRender } from 'MapLayerRender';
 
 type MapPanelProps = {
   options: any;
@@ -37,14 +27,14 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data, sensors, webcams }) 
   const [layers, setLayers] = useState<MapLayer[]>([]);
   const [currentZoomLevel, setCurrentZoom] = useState<number>(map.getZoom());
   const [showSensorNames, setShowSensorNames] = useState(false);
-  const showSensorNamesLayerText = 'sensornavn';
+  const showSensorNamesLayerText = 'Sensornavn';
 
   useEffect(() => {
     if (sensors.length > 0) {
-      setCurrentZoom(map.getZoom());
       map.fitBounds(getSensorBounds(sensors));
+      setCurrentZoom(map.getZoom());
     }
-  }, [sensors]);
+  }, [sensors, map]);
 
   useEffect(() => {
     setLayers(options.useMockLayers ? mockLayers : options.layers);
@@ -52,13 +42,14 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data, sensors, webcams }) 
 
   useMapEvents({
     // Keep layers state in sync with layers used in layerscontrol
+
+
     overlayadd(e) {
       if (e.name !== showSensorNamesLayerText) {
         const currentLayer = layers.findIndex(l => l.name === e.name);
         layers[currentLayer].isVisible = true;
         setLayers([...layers]);
       } else {
-        console.log('show sensor names');
         setShowSensorNames(true);
       }
     },
@@ -71,54 +62,15 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data, sensors, webcams }) 
         setShowSensorNames(false);
       }
     },
-    // click() {
-    //   map.locate()
-    // },
     locationfound(e) {
       map.flyTo(e.latlng, map.getZoom());
     },
     zoom: () => {
       setCurrentZoom(map.getZoom());
     },
+    
   });
 
-  const layerElement = (layer: any) => (
-    <>
-      {layer.type === 'WMSLayer' && (
-        <WMSTileLayer
-          maxZoom={22}
-          maxNativeZoom={18}
-          url={layer.serviceUrl}
-          layers={layer.WMSLayers}
-          opacity={layer.opacity != null ? layer.opacity : '1.0'}
-          version={layer.WMSVersion != null ? layer.WMSVersion : '1.3.0'}
-          transparent={true}
-          format={'image/png'}
-          tileSize={layer.tileSize != null ? layer.tileSize : 1024}
-        />
-      )}
-      {layer.type === 'WMStiledLayer' && (
-        <WMSTileLayer
-          maxZoom={22}
-          maxNativeZoom={18}
-          url={layer.serviceUrl}
-          layers={layer.WMSLayers}
-          opacity={layer.opacity != null ? layer.opacity : '1.0'}
-          version={layer.WMSVersion != null ? layer.WMSVersion : '1.3.0'}
-          transparent={true}
-          format={'image/png'}
-          tileSize={layer.tileSize != null ? layer.tileSize : 1024}
-        />
-      )}
-      {layer.type === 'tiledLayer' && <TileLayer maxZoom={22} maxNativeZoom={18} url={layer.serviceUrl} />}
-      {layer.type === 'esriTiledMapLayer' && (
-        <EsriTiledMapLayer maxZoom={22} maxNativeZoom={18} url={layer.serviceUrl} />
-      )}
-      {layer.type === 'esriDynamicMapLayer' && (
-        <EsriDynamicLayer maxZoom={22} maxNativeZoom={18} url={layer.serviceUrl} />
-      )}
-    </>
-  );
   return (
     <>
       <ScaleControl position="bottomright" imperial={false} maxWidth={100}></ScaleControl>
@@ -134,20 +86,20 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data, sensors, webcams }) 
           .filter(l => l.isBaseMap)
           .map(layer => (
             <LayersControl.BaseLayer name={layer.name} checked={layer.isVisible}>
-              {layerElement(layer)}
+              <MapLayerRender layer={layer} />
             </LayersControl.BaseLayer>
           ))}
         {layers
           .filter(l => !l.isBaseMap)
           .map(layer => (
             <LayersControl.Overlay name={layer.name} checked={layer.isVisible}>
-              {layerElement(layer)}
+              <MapLayerRender layer={layer} />
             </LayersControl.Overlay>
           ))}
         {/* Dummy layer for sensor name switch */}
         {options.useSensorNames && (
           <LayersControl.Overlay name={showSensorNamesLayerText}>
-            <TileLayer url="" />
+            <TileLayer maxZoom={22} url="" />
           </LayersControl.Overlay>
         )}
       </LayersControl>

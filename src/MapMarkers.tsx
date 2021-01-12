@@ -25,7 +25,6 @@ const MapMarkers: React.FC<MapMarkersProps> = ({ options, data, sensors, showSen
   const expandAtZoomLevel = 17;
 
   useEffect(() => {
-    console.log("effect...")
     const mGroups = [] as MapMarkerGroup[];
     sensors.forEach(s => {
       const pos = s.coord as LatLngTuple;
@@ -69,7 +68,7 @@ const MapMarkers: React.FC<MapMarkersProps> = ({ options, data, sensors, showSen
   const getSpreadMarkers = (markerGroup: MapMarkerGroup): MapMarker[] => {
     const center = map.latLngToLayerPoint(markerGroup.center);
     const numberOfSensors = markerGroup.markers.length;
-    const zoom = currentZoom
+    const zoom = currentZoom;
 
     const factor = -21;
     const addFactor = 22 * zoom;
@@ -108,7 +107,6 @@ const MapMarkers: React.FC<MapMarkersProps> = ({ options, data, sensors, showSen
     return sensorTypeConfig.find(s => s.type === 'default')!;
   };
 
-
   return (
     <>
       {mapMarkerGroups.map((markerGroup, i) => (
@@ -131,7 +129,6 @@ const MapMarkers: React.FC<MapMarkersProps> = ({ options, data, sensors, showSen
                 }
                 toggleOpen={() => toggleOpen(i)}
               ></GroupMarker>
-              // <LocationMarker mapMarker={markerGroup.markers[0]}></LocationMarker>
             )}
           </>
 

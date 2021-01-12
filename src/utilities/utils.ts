@@ -29,7 +29,6 @@ const getDateTimeFromTimestamp = (timestamp: number): string => {
   const y = d.getFullYear();
   const m = d.getMonth() + 1;
   const day = d.getUTCDay() + 1;
-  //console.log('y', y, 'm', m, 'd', day);
   // Hours part from the timestamp
   const hours = d.getHours();
   // Minutes part from the timestamp

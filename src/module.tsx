@@ -2,7 +2,7 @@ import { PanelPlugin } from '@grafana/data';
 import { Map } from './Map';
 import 'leaflet.css';
 import { MapLayer } from 'types/mapLayer';
-import { PanelOptionCode } from 'JsonEditor';
+import { PanelOptionCode } from 'PanelOptionCode';
 
 export type MapEditorFunctionProps = {
   layers: MapLayer[];

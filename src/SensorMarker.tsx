@@ -130,13 +130,11 @@ export const SensorMarker: React.FC<SensorMarkerProps> = ({ marker, showSensorNa
   };
 
   const getPopupValues = (marker: MapMarker) => {
-    console.log('getpopupvalues');
     if (data) {
       if (!options.useLegacyQuery) {
         const timeserial = getTimeSerialFromGrafanaStream(data, marker.sensor.name, options);
         marker.sensor.timeSerial = timeserial;
         if (timeserial?.values.length > 0) {
-          console.log('setting from ', timeserial);
           marker.sensor.max = +Math.max(...timeserial.values).toFixed(3);
           marker.sensor.min = +Math.min(...timeserial.values).toFixed(3);
           marker.sensor.mean = +average(timeserial.values).toFixed(3);

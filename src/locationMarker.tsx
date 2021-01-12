@@ -13,7 +13,6 @@ const marker = (type: string[]) => {
 
   const icons = type.map(m => <span key={'test'}>test</span>);
   return L.divIcon({
-    // html: '<div>test</div>',
     html: ReactDOMServer.renderToString(
       <div
         style={{

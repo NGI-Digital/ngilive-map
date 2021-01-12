@@ -10,8 +10,6 @@ export const PanelOptionCode: React.FC<Props> = ({ value, item, onChange, contex
   }
 
   const [layers, setLayers] = useState<string>(value);
-  console.log({ item });
-  console.log({ context });
   return (
     <TextArea
       css=""
@@ -21,13 +19,10 @@ export const PanelOptionCode: React.FC<Props> = ({ value, item, onChange, contex
         try {
           const obj = JSON.parse(layers);
           onChange(obj);
-          console.log('JSON SET!');
         } catch (e) {
-          console.error('Invalid JSON', e);
         }
       }}
       onChange={e => {
-        console.log(e.currentTarget.value);
         setLayers(e.currentTarget.value);
       }}
     />

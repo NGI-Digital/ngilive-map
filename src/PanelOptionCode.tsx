@@ -19,8 +19,7 @@ export const PanelOptionCode: React.FC<Props> = ({ value, item, onChange, contex
         try {
           const obj = JSON.parse(layers);
           onChange(obj);
-        } catch (e) {
-        }
+        } catch (e) {}
       }}
       onChange={e => {
         setLayers(e.currentTarget.value);

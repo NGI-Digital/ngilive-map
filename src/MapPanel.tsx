@@ -43,7 +43,6 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data, sensors, webcams }) 
   useMapEvents({
     // Keep layers state in sync with layers used in layerscontrol
 
-
     overlayadd(e) {
       if (e.name !== showSensorNamesLayerText) {
         const currentLayer = layers.findIndex(l => l.name === e.name);
@@ -68,7 +67,6 @@ const MapPanel: React.FC<MapPanelProps> = ({ options, data, sensors, webcams }) 
     zoom: () => {
       setCurrentZoom(map.getZoom());
     },
-    
   });
 
   return (

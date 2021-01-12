@@ -44,7 +44,7 @@ const MapLayerRender: React.FC<MapLayerRenderProps> = ({ layer }) => {
       )}
       {layer.type === 'esriDynamicMapLayer' && (
         <>
-        <EsriDynamicLayer maxZoom={22} maxNativeZoom={18} url={layer.serviceUrl} />
+          <EsriDynamicLayer maxZoom={22} maxNativeZoom={18} url={layer.serviceUrl} />
         </>
       )}
     </>

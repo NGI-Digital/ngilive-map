@@ -28,7 +28,6 @@ const extractWebcams = (ws: DataFrame): Webcam[] => {
     colonPos[element] = getFieldIndex(element, ws.fields);
   });
 
-
   for (let i = 0; i < len; i++) {
     if (ws.fields[1].values.get(i) === 0 || ws.fields[2].values.get(i) === 0) {
       continue;

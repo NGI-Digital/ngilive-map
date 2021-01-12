@@ -64,7 +64,6 @@ const extractSensorsFromGrafanaStream = (data: PanelData): Sensor[] => {
     colonPos[element] = getFieldIndex(element, samples.fields);
   });
 
-
   // field indexes for query B with last_value for instrument
   const instrumentIdFieldIndexQRYB = getFieldIndex('instrument_id', lastValues.fields);
   const lastValueFieldIndexQRYB = getFieldIndex('last_value', lastValues.fields);

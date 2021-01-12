@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
-import { useMap } from 'react-leaflet';
+import { useLeafletContext } from '@react-leaflet/core';
 import * as esri from 'esri-leaflet';
 
 const EsriTiledMapLayer = (props: any) => {
-  const map = useMap();
+  const context = useLeafletContext();
 
   useEffect(() => {
     const layer = esri.tiledMapLayer({
@@ -11,8 +11,8 @@ const EsriTiledMapLayer = (props: any) => {
       maxZoom: 18,
     });
     //@ts-ignore
-    layer.addTo(map);
-  }, [map, props.url]);
+    layer.addTo(context.layerContainer as Map);
+  }, [context.layerContainer, props.url]);
 
   return null;
 };
